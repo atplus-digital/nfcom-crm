@@ -2,8 +2,8 @@ import fastify from "fastify";
 
 const server = fastify();
 
-server.get("/", async (request, reply) => {
-	return "pong\n";
+server.get("/", async () => {
+	return "AAAAAAAAAAAAAA\n";
 });
 
 server.listen({ port: 3333, host: "0.0.0.0" }, (err, address) => {

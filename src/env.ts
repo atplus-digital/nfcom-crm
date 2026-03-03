@@ -7,7 +7,6 @@ config();
 export const env = createEnv({
 	server: {
 		SERVER_URL: z.string().optional(),
-		DATABASE_URL: z.string(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
