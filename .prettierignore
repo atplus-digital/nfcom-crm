@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+out
+.next
+routeTree.gen.ts
+styles.css
+pnpm-lock.yaml
+.git
+.gitignore
