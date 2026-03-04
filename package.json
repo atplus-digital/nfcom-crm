@@ -14,10 +14,12 @@
     "start": "node dist/index.js",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "types:gen": "tsx src/scripts/generate-atacado-types.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",
+    "axios": "^1.13.6",
     "fastify": "^5.7.4",
     "zod": "^4.1.11"
   },
@@ -25,6 +27,7 @@
     "@biomejs/biome": "2.2.4",
     "@types/node": "^25.3.3",
     "dotenv": "^16.0.0",
+    "orval": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
