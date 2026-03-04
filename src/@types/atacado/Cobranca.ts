@@ -1,0 +1,21 @@
+import type { Fatura } from "./Fatura";
+
+export interface Cobranca {
+	id?: number;
+	createdAt?: string;
+	updatedAt?: string;
+	createdById?: number;
+	updatedById?: number;
+	f_data_vencimento?: string;
+	f_valor_total?: string;
+	f_status?: string;
+	f_nome_devedor?: string;
+	f_email_devedor?: string;
+	f_documento_devedor?: string;
+	f_id_externo?: string;
+	f_link_fatura?: string;
+	f_fk_fatura?: number;
+	f_fatura?: Fatura;
+	f_data_emissao?: string;
+	f_descricao?: string;
+}

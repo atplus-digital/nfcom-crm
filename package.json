@@ -15,7 +15,7 @@
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "types:gen": "tsx src/scripts/generate-atacado-types.ts"
+    "schemas:gen": "tsx src/scripts/atacado/generate-schemas.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",

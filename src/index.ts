@@ -5,7 +5,9 @@ import { atacadoApi } from "./services/atacado/atacado-api.js";
 const server = fastify();
 
 server.get("/", async () => {
-	const response = await atacadoApi.get("/swagger:get");
+	const response = await atacadoApi.get(
+		"/swagger:get?ns=collections/t_nfcom_cobrancas"
+	);
 
 	return response.data;
 });

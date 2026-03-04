@@ -1,0 +1,41 @@
+import type { Cobranca } from "./Cobranca";
+import type { ItemNFCom } from "./ItemNFCom";
+
+export interface NFCom {
+	id?: number;
+	createdAt?: string;
+	updatedAt?: string;
+	createdById?: number;
+	updatedById?: number;
+	f_fk_cobranca?: number;
+	f_cobranca?: Cobranca;
+	f_nome?: string;
+	f_cpfcnpj?: string;
+	f_rgie?: string;
+	f_endereco?: string;
+	f_endereco_numero?: string;
+	f_bairro?: string;
+	f_cidade?: string;
+	f_uf?: string;
+	f_cep?: string;
+	f_telefone?: string;
+	f_email?: string;
+	f_mensagem?: string;
+	f_qrcodepix?: string;
+	f_codigobarras?: string;
+	f_ambiente?: number;
+	f_numero?: number;
+	f_serie?: number;
+	f_chave?: string;
+	f_protocolo?: string;
+	f_emissao?: string;
+	f_situacao?: string;
+	f_bc_icms?: string;
+	f_icms?: string;
+	f_total?: string;
+	f_linhadigitavel?: string;
+	f_pdf?: string;
+	f_xml?: string;
+	f_status_interno?: string;
+	f_nota_fiscal?: ItemNFCom[];
+}
