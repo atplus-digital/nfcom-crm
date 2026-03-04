@@ -1,5 +1,5 @@
 import axios from "axios";
-import { env } from "@/env.js";
+import { env } from "@/env";
 
 const atacadoApi = axios.create({
 	baseURL: env.ATACADO_API_URL,
