@@ -8,7 +8,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.2",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "format": "biome format",
@@ -27,6 +27,7 @@
     "@types/node": "^25.3.3",
     "dotenv": "^16.0.0",
     "orval": "^8.5.1",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

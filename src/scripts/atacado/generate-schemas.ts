@@ -1,8 +1,8 @@
 import { mkdir, readFile, rm, rmdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { generate, type Options } from "orval";
-import { atacadoApi } from "@/services/atacado/atacado-api.js";
-import { COLLECTIONS } from "./collections.js";
+import { atacadoApi } from "@/services/atacado/atacado-api";
+import { COLLECTIONS } from "./collections";
 
 const OUTPUT_DIR = "./src/@types/atacado";
 const TEMP_DIR = ".tmp";

@@ -6,14 +6,13 @@
     "dist"
   ],
   "compilerOptions": {
+    "lib": [
+      "ES2024"
+    ],
+    "module": "nodenext",
+    "target": "ES2024",
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "es2022",
-    "lib": [
-      "es2022"
-    ],
     "types": [
       "node"
     ],
@@ -24,9 +23,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "noUncheckedSideEffectImports": true,
-    "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "moduleDetection": "force",
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
