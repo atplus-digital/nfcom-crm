@@ -1,11 +1,11 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, rmdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { generate, type Options } from "orval";
 import { atacadoApi } from "@/services/atacado/atacado-api.js";
 import { COLLECTIONS } from "./collections.js";
 
 const OUTPUT_DIR = "./src/@types/atacado";
-const TEMP_DIR = ".tmp/atacado-openapi";
+const TEMP_DIR = ".tmp";
 const API_TIMEOUT = 15000;
 
 interface OrvalEntry {
@@ -47,20 +47,19 @@ async function fetchSpec(
 async function prepareEntries(): Promise<OrvalEntry[]> {
 	await mkdir(TEMP_DIR, { recursive: true });
 
-	const entries: OrvalEntry[] = [];
-
-	for (const col of COLLECTIONS) {
-		console.log(`⏳ ${col.name}`);
-		const specPath = await fetchSpec(col.name, col.collection);
-		if (specPath) {
-			entries.push({
+	const results = await Promise.all(
+		COLLECTIONS.map(async (col) => {
+			console.log(`⏳ ${col.name}`);
+			const specPath = await fetchSpec(col.name, col.collection);
+			if (!specPath) return null;
+			return {
 				name: col.name,
 				config: buildOrvalConfig(specPath, col.name),
-			});
-		}
-	}
+			} satisfies OrvalEntry;
+		})
+	);
 
-	return entries;
+	return results.filter((e): e is OrvalEntry => e !== null);
 }
 
 /** child FK alias → nome do tipo pai */
@@ -128,14 +127,16 @@ async function runGeneration(entries: OrvalEntry[]): Promise<void> {
 	const fkMap = buildFkMap();
 	const parentRelationsMap = buildParentRelationsMap();
 
-	for (const { name, config } of entries) {
-		await generate(config);
-		const outputPath =
-			typeof config.output === "object" ? config.output?.target : undefined;
-		if (outputPath) {
-			await extractMainInterface(outputPath, name, fkMap, parentRelationsMap);
-		}
-	}
+	await Promise.all(
+		entries.map(async ({ name, config }) => {
+			await generate(config);
+			const outputPath =
+				typeof config.output === "object" ? config.output?.target : undefined;
+			if (outputPath) {
+				await extractMainInterface(outputPath, name, fkMap, parentRelationsMap);
+			}
+		})
+	);
 }
 
 async function extractMainInterface(
@@ -228,6 +229,7 @@ async function main(): Promise<void> {
 		process.exit(1);
 	} finally {
 		await rm(TEMP_DIR, { recursive: true, force: true });
+		await rmdir(TEMP_DIR).catch(() => {});
 	}
 
 	process.exit(0);
