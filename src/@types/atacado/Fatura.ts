@@ -1,3 +1,4 @@
+import type { Cobranca } from "./Cobranca";
 import type { Parceiro } from "./Parceiro";
 
 export interface Fatura {
@@ -13,4 +14,5 @@ export interface Fatura {
 	f_parceiro?: Parceiro;
 	f_tipo_de_faturamento?: string;
 	f_data_vencimento?: string;
+	f_cobrancas?: Cobranca[];
 }

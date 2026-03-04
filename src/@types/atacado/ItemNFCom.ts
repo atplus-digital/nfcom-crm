@@ -1,3 +1,5 @@
+import type { NFCom } from "./NFCom";
+
 export interface ItemNFCom {
 	id?: number;
 	createdAt?: string;
@@ -17,4 +19,5 @@ export interface ItemNFCom {
 	f_incide_aliquota?: string;
 	f_icms?: string;
 	f_aliq_icms?: string;
+	f_nota_fiscal?: NFCom;
 }

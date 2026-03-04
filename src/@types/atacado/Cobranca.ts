@@ -1,4 +1,5 @@
 import type { Fatura } from "./Fatura";
+import type { NFCom } from "./NFCom";
 
 export interface Cobranca {
 	id?: number;
@@ -18,4 +19,5 @@ export interface Cobranca {
 	f_fatura?: Fatura;
 	f_data_emissao?: string;
 	f_descricao?: string;
+	f_notas_fiscais?: NFCom[];
 }

@@ -37,5 +37,5 @@ export interface NFCom {
 	f_pdf?: string;
 	f_xml?: string;
 	f_status_interno?: string;
-	f_nota_fiscal?: ItemNFCom[];
+	f_nota_itens?: ItemNFCom[];
 }
