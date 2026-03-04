@@ -1,10 +1,12 @@
 import fastify from "fastify";
 import { env } from "@/env";
 import { atacadoRoutes } from "@/routes/atacado-routes";
+import { getActiveUsers } from "@/services/atacado/atacado-service";
 
 async function buildServer() {
 	const server = fastify();
 
+	server.get("/", () => getActiveUsers(17));
 	server.register(atacadoRoutes, { prefix: "/atacado" });
 
 	const address = await server.listen({

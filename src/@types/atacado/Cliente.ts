@@ -1,4 +1,5 @@
 import type { Parceiro } from "./Parceiro";
+import type { Servico } from "./Servico";
 
 export interface Cliente {
 	f_fk_servicos_adicionais?: number;
@@ -25,4 +26,5 @@ export interface Cliente {
 	f_uf?: string;
 	updatedById?: number;
 	createdById?: number;
+	f_linhas_fixas?: Servico[];
 }

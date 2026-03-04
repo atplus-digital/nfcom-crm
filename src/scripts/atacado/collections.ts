@@ -39,5 +39,10 @@ export const COLLECTIONS: CollectionInput[] = [
 	{
 		collection: "t_clientes",
 		name: "Cliente",
+		hasMany: [{ collection: "t_linhas_fixas", fkAlias: "f_linhas_fixas" }],
+	},
+	{
+		collection: "t_linhas_fixas",
+		name: "Servico",
 	},
 ];

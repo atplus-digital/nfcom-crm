@@ -235,4 +235,4 @@ async function main(): Promise<void> {
 	process.exit(0);
 }
 
-main();
+export { main };
