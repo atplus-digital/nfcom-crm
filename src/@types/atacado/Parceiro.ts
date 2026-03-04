@@ -1,4 +1,5 @@
 import type { Cliente } from "./Cliente";
+import type { PlanoDeServico } from "./PlanoDeServico";
 
 export interface Parceiro {
 	f_cidade?: string;
@@ -25,4 +26,5 @@ export interface Parceiro {
 	updatedById?: number;
 	createdById?: number;
 	f_usuarios?: Cliente[];
+	f_planos_de_servico?: PlanoDeServico[];
 }

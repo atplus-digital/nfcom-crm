@@ -16,4 +16,5 @@ export { atacadoApi };
 export const atacadoRoutes = {
 	parceiros: "/t_parceiros",
 	clientes: "/t_clientes",
+	planosDeServico: "/t_planos_de_servico",
 };

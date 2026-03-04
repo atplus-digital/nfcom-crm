@@ -34,7 +34,13 @@ export const COLLECTIONS: CollectionInput[] = [
 	{
 		collection: "t_parceiros",
 		name: "Parceiro",
-		hasMany: [{ collection: "t_clientes", fkAlias: "f_usuarios" }],
+		hasMany: [
+			{ collection: "t_clientes", fkAlias: "f_usuarios" },
+			{
+				collection: "t_planos_de_servico",
+				fkAlias: "f_planos_de_servico",
+			},
+		],
 	},
 	{
 		collection: "t_clientes",
@@ -44,5 +50,10 @@ export const COLLECTIONS: CollectionInput[] = [
 	{
 		collection: "t_linhas_fixas",
 		name: "Servico",
+	},
+	{
+		collection: "t_planos_de_servico",
+		name: "PlanoDeServico",
+		hasMany: [{ collection: "t_parceiros", fkAlias: "f_c8flsp9105w" }],
 	},
 ];

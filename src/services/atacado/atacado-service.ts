@@ -1,6 +1,7 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { atacadoApi, atacadoRoutes } from "./atacado-api";
+import { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 
 export async function getParceiro(id: number | string): Promise<Parceiro> {
 	const response = await atacadoApi.get<{ data: Parceiro }>(
@@ -30,6 +31,18 @@ export async function getActiveUsers(
 					},
 				},
 				appends: ["f_linhas_fixas"],
+			},
+		}
+	);
+	return response.data.data;
+}
+
+export async function getPlanosDeServico(): Promise<PlanoDeServico[]> {
+	const response = await atacadoApi.get<{ data: PlanoDeServico[] }>(
+		`${atacadoRoutes.planosDeServico}:list`,
+		{
+			params: {
+				pageSize: 9999,
 			},
 		}
 	);
