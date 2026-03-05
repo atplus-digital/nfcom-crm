@@ -17,6 +17,6 @@ export const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
 				},
 			},
 		},
-		preparaFaturaHandler
+		preparaFaturaHandler,
 	);
 };

@@ -25,7 +25,7 @@ async function buildServer() {
 	});
 
 	console.log(`Server listening at ${address}`);
-	server.log.info("Server Started");
+	server.log.debug("Server Started");
 }
 
 export { buildServer };

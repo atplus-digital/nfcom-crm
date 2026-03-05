@@ -14,6 +14,9 @@ importers:
       axios:
         specifier: ^1.13.6
         version: 1.13.6
+      cpf-cnpj-validator:
+        specifier: ^1.0.3
+        version: 1.0.3
       fastify:
         specifier: ^5.7.4
         version: 5.7.4
@@ -290,6 +293,27 @@ packages:
   '@gerrit0/mini-shiki@3.23.0':
     resolution: {integrity: sha512-bEMORlG0cqdjVyCEuU0cDQbORWX+kYCeo0kV1lbxF5bt4r7SID2l9bqsxJEM0zndaxpOUT7riCyIVEuqq/Ynxg==}
 
+  '@hapi/address@4.1.0':
+    resolution: {integrity: sha512-SkszZf13HVgGmChdHo/PxchnSaCJ6cetVqLzyciudzZRT0jcOouIF/Q93mgjw8cce+D+4F4C1Z/WrfFN+O3VHQ==}
+    deprecated: Moved to 'npm install @sideway/address'
+
+  '@hapi/formula@2.0.0':
+    resolution: {integrity: sha512-V87P8fv7PI0LH7LiVi8Lkf3x+KCO7pQozXRssAHNXXL9L1K+uyu4XypLXwxqVDKgyQai6qj3/KteNlrqDx4W5A==}
+    deprecated: Moved to 'npm install @sideway/formula'
+
+  '@hapi/hoek@9.3.0':
+    resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
+
+  '@hapi/joi@17.1.1':
+    resolution: {integrity: sha512-p4DKeZAoeZW4g3u7ZeRo+vCDuSDgSvtsB/NpfjXEHTUjSeINAi/RrVOWiVQ1isaoLzMvFEhe8n5065mQq1AdQg==}
+    deprecated: Switch to 'npm install joi'
+
+  '@hapi/pinpoint@2.0.1':
+    resolution: {integrity: sha512-EKQmr16tM8s16vTT3cA5L0kZZcTMU5DUOZTuvpnY738m+jyP3JIUj+Mm1xc1rsLkGBQ/gVnfKYPwOmPg1tUR4Q==}
+
+  '@hapi/topo@5.1.0':
+    resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -518,6 +542,9 @@ packages:
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
+
+  cpf-cnpj-validator@1.0.3:
+    resolution: {integrity: sha512-Slh7iv+sf2FhP9xFRMExuaDF7ndERVzmjBZHqwWG+GqHSqPmEggvLuKUUFJZxb+G804rjqRnnu5eCkbeChqM/Q==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -1288,6 +1315,28 @@ snapshots:
       '@shikijs/types': 3.23.0
       '@shikijs/vscode-textmate': 10.0.2
 
+  '@hapi/address@4.1.0':
+    dependencies:
+      '@hapi/hoek': 9.3.0
+
+  '@hapi/formula@2.0.0': {}
+
+  '@hapi/hoek@9.3.0': {}
+
+  '@hapi/joi@17.1.1':
+    dependencies:
+      '@hapi/address': 4.1.0
+      '@hapi/formula': 2.0.0
+      '@hapi/hoek': 9.3.0
+      '@hapi/pinpoint': 2.0.1
+      '@hapi/topo': 5.1.0
+
+  '@hapi/pinpoint@2.0.1': {}
+
+  '@hapi/topo@5.1.0':
+    dependencies:
+      '@hapi/hoek': 9.3.0
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -1574,6 +1623,10 @@ snapshots:
   compare-versions@6.1.1: {}
 
   cookie@1.1.1: {}
+
+  cpf-cnpj-validator@1.0.3:
+    dependencies:
+      '@hapi/joi': 17.1.1
 
   cross-spawn@7.0.6:
     dependencies:
