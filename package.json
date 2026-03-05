@@ -15,7 +15,7 @@
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "schemas:gen": "tsx src/scripts/schemas-gen.ts"
+    "types:gen": "tsx scripts/types-gen/types-gen.mts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",

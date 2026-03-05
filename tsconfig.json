@@ -1,9 +1,10 @@
 {
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "compilerOptions": {
     "lib": [
@@ -16,15 +17,6 @@
     "types": [
       "node"
     ],
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedSideEffectImports": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -34,6 +26,15 @@
         "./src/@types/*"
       ]
     },
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedSideEffectImports": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
     "esModuleInterop": true
   }
 }

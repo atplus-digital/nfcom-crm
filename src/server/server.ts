@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import { env } from "@/env";
-import { atacadoRoutes } from "@/routes/atacado-routes";
+import { atacadoRoutes } from "@/server/atacado-routes";
 import {
 	getActiveUsers,
 	getParceiro,
@@ -8,7 +8,14 @@ import {
 } from "@/services/atacado/atacado-service";
 
 async function buildServer() {
-	const server = fastify();
+	const server = fastify({
+		logger: {
+			enabled: true,
+			file: "logs/server.log",
+		},
+	});
+
+	server.log.info("Iniciando o servidor...");
 
 	server.get("/", async () => {
 		const id = 17;

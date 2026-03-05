@@ -1,4 +1,4 @@
-import { main } from "./atacado/generate-schemas";
+import { main } from "./main.mts";
 
 main().catch((error) => {
 	console.error("Erro ao gerar schemas:", error);

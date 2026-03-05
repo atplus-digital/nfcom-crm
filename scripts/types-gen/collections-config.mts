@@ -1,14 +1,4 @@
-interface HasRelation {
-	collection: string;
-	fkAlias?: string;
-}
-
-interface CollectionInput {
-	collection: string;
-	name: string;
-	hasMany?: HasRelation[];
-	hasOne?: HasRelation[];
-}
+import { CollectionInput } from "./types.mts";
 
 export const COLLECTIONS: CollectionInput[] = [
 	{
