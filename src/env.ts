@@ -4,14 +4,17 @@ import { z } from "zod";
 
 config();
 
-export const env = createEnv({
-	server: {
-		SERVER_URL: z.string().default("0.0.0.0"),
-		SERVER_PORT: z.number().default(3333),
+const envSchema = {
+	SERVER_URL: z.string().default("0.0.0.0"),
+	SERVER_PORT: z.coerce.number().default(3333),
+	ATACADO_API_KEY: z.string().min(1, "ATACADO_API_KEY é obrigatório"),
+	ATACADO_API_URL: z.url("ATACADO_API_URL deve ser uma URL válida"),
+};
 
-		ATACADO_API_KEY: z.string(),
-		ATACADO_API_URL: z.url(),
-	},
+const env = createEnv({
+	server: envSchema,
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
 });
+
+export { env };

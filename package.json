@@ -21,6 +21,7 @@
     "@t3-oss/env-core": "^0.13.8",
     "axios": "^1.13.6",
     "cpf-cnpj-validator": "^1.0.3",
+    "date-fns": "^4.1.0",
     "fastify": "^5.7.4",
     "fastify-type-provider-zod": "^6.1.0",
     "zod": "^4.1.11"
