@@ -1,12 +1,15 @@
-GET http://localhost:3333 HTTP/1.1
+@host = http://localhost:3333
+# @host = https://api-nfcom-crm.kzwirq.easypanel.host/
+
+GET {{host}} HTTP/1.1
 
 ###
 
-POST http://localhost:3333/prepara-fatura HTTP/1.1
+POST {{host}}/prepara-fatura HTTP/1.1
 Content-Type: application/json
 
 {
     "f_parceiro": 17,
-    "f_data_referencia": "abc",
+    "f_data_referencia": "01-01-2026",
     "f_tipo_de_faturamento": "parceiro"
 }

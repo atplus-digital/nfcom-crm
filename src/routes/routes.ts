@@ -3,7 +3,7 @@ import { preparaFaturaRoutes } from "./prepara-fatura";
 
 export const appRoutes: FastifyPluginAsync = async (server) => {
 	server.get("/", async () => {
-		return { ok: true };
+		return { api: "on" };
 	});
 
 	await server.register(preparaFaturaRoutes);

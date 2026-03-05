@@ -10,7 +10,10 @@ export const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
 			schema: {
 				body: preparaFaturaSchema,
 				response: {
-					201: z.string(),
+					201: z.object({
+						status: z.literal(201),
+						success: z.literal(true),
+					}),
 				},
 			},
 		},
