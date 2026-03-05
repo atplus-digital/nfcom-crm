@@ -1,5 +1,5 @@
-@host = http://localhost:3333
 # @host = https://api-nfcom-crm.kzwirq.easypanel.host/
+@host = http://localhost:3333
 
 GET {{host}} HTTP/1.1
 
