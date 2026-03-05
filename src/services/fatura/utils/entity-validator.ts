@@ -72,24 +72,24 @@ export const validateRegistrationData = (
 		parceiro as unknown as Record<string, unknown>,
 		parceiro.id ?? 0,
 	);
-	const clientResults = clientes.map(cliente =>
+	const clientResults = clientes.map((cliente) =>
 		validateCliente(
 			cliente as unknown as Record<string, unknown>,
 			cliente.id ?? 0,
 		),
 	);
 
-	const invalidClients = clientResults.filter(r => !r.valid);
+	const invalidClients = clientResults.filter((r) => !r.valid);
 
 	if (!partnerResult.valid) {
-		const campos = partnerResult.invalidFields.map(c => c.label).join(", ");
+		const campos = partnerResult.invalidFields.map((c) => c.label).join(", ");
 		throw new Error(`Dados do parceiro inválidos: ${campos}`);
 	}
 
 	const firstInvalidClient = invalidClients?.[0];
 	if (firstInvalidClient) {
 		const campos = firstInvalidClient.invalidFields
-			.map(ci => ci.label)
+			.map((ci) => ci.label)
 			.join(", ");
 		const mensagem = `Cliente "${firstInvalidClient.name}" (${firstInvalidClient.id}) com dados inválidos: ${campos}`;
 		const additionalError =

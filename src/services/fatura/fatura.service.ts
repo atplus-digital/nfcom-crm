@@ -29,8 +29,7 @@ type EnderecoFields = Pick<
 
 // Detalhe do Cliente reutilizando campos de Cliente
 export interface DetalheCliente
-	extends
-		Pick<
+	extends Pick<
 			Cliente,
 			| "id"
 			| "f_nome_razao"
@@ -56,8 +55,7 @@ export interface ServicoAgrupado {
 
 // Parceiro da Fatura reutilizando campos de Parceiro
 export interface ParceiroFatura
-	extends
-		Pick<
+	extends Pick<
 			Parceiro,
 			| "id"
 			| "f_razao_social"
@@ -165,7 +163,7 @@ export function getPlanoById(
 		throw new Error("ID do plano é inválido.");
 	}
 
-	const plano = planos.find(p => p.id === id);
+	const plano = planos.find((p) => p.id === id);
 
 	if (!plano) {
 		throw new Error(`Plano com ID ${id} não encontrado.`);
