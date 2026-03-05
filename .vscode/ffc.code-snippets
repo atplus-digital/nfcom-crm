@@ -1,0 +1,15 @@
+{
+	"Function": {
+		"scope": "typescript",
+		"prefix": "ffca",
+		"body": [
+			"async function ${1:name}(${3}) {",
+			"",
+			"  return ${2};",
+			"}",
+			"",
+			"export { ${1} };"
+		],
+		"description": "Create a TypeScript named function with JSDoc and export it"
+	}
+}

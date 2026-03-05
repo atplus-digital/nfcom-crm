@@ -1,4 +1,4 @@
-import { buildServer } from "./server/server";
+import { buildServer } from "./server";
 
 async function main() {
 	try {

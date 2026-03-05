@@ -10,7 +10,6 @@ export function buildOrvalConfig(input: string, name: string): Options {
 			client: "axios",
 			mode: "single",
 			biome: true,
-			mock: true,
 		},
 	};
 }
