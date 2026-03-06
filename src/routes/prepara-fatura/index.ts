@@ -1,5 +1,4 @@
 import type { FastifyPluginAsync } from "fastify";
-
 import { prepareInvoiceHandler } from "./prepara-fatura.controller";
 import {
 	preparaFaturaResponseSchema,
