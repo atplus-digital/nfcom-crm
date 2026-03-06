@@ -8,12 +8,7 @@ import { appRoutes } from "@/routes/routes";
 import { errorHandler } from "@/shared/error-handler";
 import { createLoggerConfig } from "@/shared/logging/logger.config";
 
-interface ServerInfo {
-	readonly address: string;
-	readonly port: number;
-}
-
-const buildServer = async (): Promise<ServerInfo> => {
+const buildServer = async () => {
 	const server = fastify({
 		logger: createLoggerConfig(),
 	});
@@ -30,11 +25,6 @@ const buildServer = async (): Promise<ServerInfo> => {
 	});
 
 	server.log.info(`Server listening at ${address}`);
-
-	return {
-		address: env.SERVER_URL,
-		port: env.SERVER_PORT,
-	};
 };
 
 export { buildServer };

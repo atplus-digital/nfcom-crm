@@ -45,9 +45,16 @@ interface InvoicePartner {
 	readonly groupedServices: readonly GroupedService[];
 }
 
+type BillingType =
+	| "parceiro"
+	| "via-parceiro"
+	| "cofaturamento"
+	| "cliente-final";
+
 interface CalculateInvoiceParams {
 	readonly partnerId: string | number;
 	readonly referenceDate: string;
+	readonly billingType?: BillingType;
 }
 
 export type {
@@ -58,4 +65,5 @@ export type {
 	PartnerInvoice,
 	InvoicePartner,
 	CalculateInvoiceParams,
+	BillingType as TipoFaturamento,
 };

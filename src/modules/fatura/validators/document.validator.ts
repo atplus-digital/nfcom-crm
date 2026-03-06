@@ -36,47 +36,47 @@ const documentValidator = {
 		return validateDocument(sanitized, type);
 	},
 
-	validateParceiro(parceiro: Parceiro): DocumentValidationResult {
-		const cnpj = sanitizeDocument(parceiro.f_cnpj);
+	validatePartner(partner: Parceiro): DocumentValidationResult {
+		const cnpj = sanitizeDocument(partner.f_cnpj);
 
 		if (!validateCNPJ(cnpj)) {
 			return Failure({
-				entity: parceiro.f_razao_social ?? "Parceiro",
+				entity: partner.f_razao_social ?? "Parceiro",
 				type: "CNPJ",
-				message: `CNPJ do parceiro "${parceiro.f_razao_social}" (${parceiro.id}) é inválido`,
+				message: `CNPJ do parceiro "${partner.f_razao_social}" (${partner.id}) é inválido`,
 			});
 		}
 
 		return Success(undefined);
 	},
 
-	validateCliente(cliente: Cliente): DocumentValidationResult {
-		const documento = sanitizeDocument(cliente.f_cpf_cnpj);
-		const type = detectDocumentType(documento);
+	validateClient(client: Cliente): DocumentValidationResult {
+		const document = sanitizeDocument(client.f_cpf_cnpj);
+		const type = detectDocumentType(document);
 
-		if (!validateDocument(documento, type)) {
+		if (!validateDocument(document, type)) {
 			return Failure({
-				entity: cliente.f_nome_razao ?? "Cliente",
+				entity: client.f_nome_razao ?? "Cliente",
 				type,
-				message: `${type} do cliente "${cliente.f_nome_razao}" (${cliente.id}) é inválido`,
+				message: `${type} do cliente "${client.f_nome_razao}" (${client.id}) é inválido`,
 			});
 		}
 
 		return Success(undefined);
 	},
 
-	validateAll(parceiro: Parceiro, clientes: readonly Cliente[]): void {
-		const parceiroResult = this.validateParceiro(parceiro);
+	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
+		const partnerResult = this.validatePartner(partner);
 
-		if (!parceiroResult.success) {
-			throw DocumentValidationError.create(parceiroResult.error.message);
+		if (!partnerResult.success) {
+			throw DocumentValidationError.create(partnerResult.error.message);
 		}
 
-		for (const cliente of clientes) {
-			const clienteResult = this.validateCliente(cliente);
+		for (const client of clients) {
+			const clientResult = this.validateClient(client);
 
-			if (!clienteResult.success) {
-				throw DocumentValidationError.create(clienteResult.error.message);
+			if (!clientResult.success) {
+				throw DocumentValidationError.create(clientResult.error.message);
 			}
 		}
 	},

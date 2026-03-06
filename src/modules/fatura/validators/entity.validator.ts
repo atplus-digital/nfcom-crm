@@ -55,39 +55,39 @@ const validateEntity = (
 };
 
 const entityValidator = {
-	validateParceiro(parceiro: Parceiro): ValidationResult {
+	validatePartner(partner: Parceiro): ValidationResult {
 		return validateEntity(
-			parceiro as Record<string, unknown>,
+			partner as Record<string, unknown>,
 			REQUIRED_PARTNER_FIELDS,
 		);
 	},
 
-	validateCliente(cliente: Cliente): ValidationResult {
+	validateClient(client: Cliente): ValidationResult {
 		return validateEntity(
-			cliente as Record<string, unknown>,
+			client as Record<string, unknown>,
 			REQUIRED_CLIENT_FIELDS,
 		);
 	},
 
-	validateAll(parceiro: Parceiro, clientes: readonly Cliente[]): void {
-		const parceiroResult = this.validateParceiro(parceiro);
+	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
+		const partnerResult = this.validatePartner(partner);
 
-		if (!parceiroResult.success) {
+		if (!partnerResult.success) {
 			throw EntityValidationError.create(
 				"Parceiro",
-				parceiro.id ?? 0,
-				parceiroResult.error,
+				partner.id ?? 0,
+				partnerResult.error,
 			);
 		}
 
-		for (const cliente of clientes) {
-			const clienteResult = this.validateCliente(cliente);
+		for (const client of clients) {
+			const clientResult = this.validateClient(client);
 
-			if (!clienteResult.success) {
+			if (!clientResult.success) {
 				throw EntityValidationError.create(
-					`Cliente "${cliente.f_nome_razao}"`,
-					cliente.id ?? 0,
-					clienteResult.error,
+					`Cliente "${client.f_nome_razao}"`,
+					client.id ?? 0,
+					clientResult.error,
 				);
 			}
 		}
