@@ -4,9 +4,9 @@ import {
 	validatorCompiler,
 } from "fastify-type-provider-zod";
 import { env } from "@/env";
-import { errorHandler } from "@/infra/http/error-handler";
-import { createLoggerConfig } from "@/infra/logging/logger.config";
 import { appRoutes } from "@/routes/routes";
+import { errorHandler } from "@/shared/error-handler";
+import { createLoggerConfig } from "@/shared/logging/logger.config";
 
 interface ServerInfo {
 	readonly address: string;

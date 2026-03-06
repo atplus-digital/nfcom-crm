@@ -1,19 +1,19 @@
-import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { Cliente } from "@/@types/atacado/Cliente";
+import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { atacadoRepository } from "@/modules/atacado/atacado.repository";
-import { NotFoundError } from "@/infra/http/base.error";
 import { documentValidator } from "@/modules/fatura/validators/document.validator";
 import { entityValidator } from "@/modules/fatura/validators/entity.validator";
-import { DateCalculator } from "./domain/date-calculator";
-import { LinhaProcessor } from "./domain/linha-processor";
-import { ClienteBuilder } from "./domain/cliente-builder";
-import { ParceiroBuilder } from "./domain/parceiro-builder";
+import { NotFoundError } from "@/shared/base.error";
 import { DATES } from "./constants";
+import { criarDetalheCliente } from "./domain/cliente-builder";
+import { calcularVencimento } from "./domain/date-calculator";
+import { LinhaProcessor } from "./domain/linha-processor";
+import { criarFaturaParceiro } from "./domain/parceiro-builder";
 import type {
-	FaturaParceiro,
 	CalcularFaturaParams,
 	DetalheCliente,
+	FaturaParceiro,
 } from "./domain/types";
 
 interface FaturaDataService {
@@ -69,7 +69,7 @@ class FaturaCalculator {
 		const servicosAgrupados =
 			LinhaProcessor.agruparServicos(clientesProcessados);
 
-		const parceiroFatura = ParceiroBuilder.criarFaturaParceiro(
+		const parceiroFatura = criarFaturaParceiro(
 			parceiro,
 			totalFatura,
 			clientesProcessados.length,
@@ -113,9 +113,7 @@ class FaturaCalculator {
 			const { linhas, total } = linhaProcessor.processarLinhasCliente(cliente);
 
 			if (linhas.length > 0) {
-				processados.push(
-					ClienteBuilder.criarDetalheCliente(cliente, linhas, total),
-				);
+				processados.push(criarDetalheCliente(cliente, linhas, total));
 			}
 		}
 
@@ -135,7 +133,7 @@ class FaturaCalculator {
 		dataReferencia: string,
 	): string {
 		const diaVencimento = parceiro.f_data_vencimento ?? DATES.DEFAULT_DUE_DAY;
-		return DateCalculator.calcularVencimento(dataReferencia, diaVencimento);
+		return calcularVencimento(dataReferencia, diaVencimento);
 	}
 }
 

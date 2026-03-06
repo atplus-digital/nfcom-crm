@@ -7,6 +7,7 @@ const bootstrap = async (): Promise<void> => {
 		console.error("[FATAL] Failed to start server:", error);
 		process.exit(1);
 	}
+	console.log("done");
 };
 
 bootstrap();

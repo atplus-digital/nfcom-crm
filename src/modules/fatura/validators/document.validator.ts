@@ -1,8 +1,8 @@
 import * as cpfCnpjValidator from "cpf-cnpj-validator";
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { DocumentValidationError } from "@/infra/http/base.error";
-import { Failure, Success, type Result } from "@/infra/result";
+import { DocumentValidationError } from "@/shared/base.error";
+import { Failure, type Result, Success } from "@/shared/result";
 
 type DocumentType = "CPF" | "CNPJ";
 

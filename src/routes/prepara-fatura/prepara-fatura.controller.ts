@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { formatToISODate } from "@/modules/fatura/domain/date-calculator";
 import { faturaService } from "@/modules/fatura/fatura.service";
 import type { PreparaFaturaBody } from "./prepara-fatura.schemas";
-import { DateCalculator } from "@/modules/fatura/domain/date-calculator";
 
 interface PreparaFaturaResponse {
 	readonly status: 200;
@@ -19,13 +19,13 @@ const preparaFaturaHandler = async (
 
 	const fatura = await faturaService.calcular({
 		parceiroId: f_parceiro,
-		dataReferencia: DateCalculator.formatToISODate(f_data_referencia),
+		dataReferencia: formatToISODate(f_data_referencia),
 	});
 
 	const response: PreparaFaturaResponse = {
 		status: 200,
 		success: true,
-		dateStr: DateCalculator.formatToISODate(f_data_referencia),
+		dateStr: formatToISODate(f_data_referencia),
 		date: f_data_referencia,
 		data: fatura,
 	};

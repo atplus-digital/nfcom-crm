@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import { BusinessRuleError } from "@/infra/http/base.error";
+import { BusinessRuleError } from "@/shared/base.error";
 import { LINES } from "./constants";
-import type { LinhaProcessada, LinhaAgrupada, ServicoAgrupado } from "./types";
+import type { LinhaAgrupada, LinhaProcessada, ServicoAgrupado } from "./types";
 
 interface PlanoInfo {
 	readonly id: string | number;

@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { env } from "@/env";
-import { ExternalApiError } from "@/infra/http/base.error";
+import { ExternalApiError } from "@/shared/base.error";
 import { API_HEADERS, HEADERS } from "./constants";
 
 const ATACADO_ROUTES = {

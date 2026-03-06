@@ -1,10 +1,7 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import {
-	EntityValidationError,
-	type FieldError,
-} from "@/infra/http/base.error";
-import { Failure, Success, type Result } from "@/infra/result";
+import { EntityValidationError, type FieldError } from "@/shared/base.error";
+import { Failure, type Result, Success } from "@/shared/result";
 
 type ValidationResult = Result<void, FieldError[]>;
 

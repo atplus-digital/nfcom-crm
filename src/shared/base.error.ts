@@ -1,4 +1,4 @@
-import { ERROR_CODES, HTTP_STATUS } from "@/infra/http/constants";
+import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
 
 interface FieldError {
 	readonly field: string;
@@ -47,15 +47,6 @@ class NotFoundError extends AppError {
 	}
 }
 
-class ValidationError extends AppError {
-	readonly type = ERROR_CODES.VALIDATION_ERROR;
-	readonly statusCode = HTTP_STATUS.BAD_REQUEST;
-
-	static create(message: string): ValidationError {
-		return new ValidationError(message);
-	}
-}
-
 class EntityValidationError extends AppError {
 	readonly type = ERROR_CODES.ENTITY_VALIDATION_ERROR;
 	readonly statusCode = HTTP_STATUS.BAD_REQUEST;
@@ -65,7 +56,7 @@ class EntityValidationError extends AppError {
 		identifier: string | number,
 		fields: readonly FieldError[],
 	): EntityValidationError {
-		const fieldNames = fields.map(f => f.label).join(", ");
+		const fieldNames = fields.map((f) => f.label).join(", ");
 		const message = `${entityName} "${identifier}" com dados inválidos: ${fieldNames}`;
 		return new EntityValidationError(message, {
 			resource: entityName,
@@ -109,38 +100,24 @@ class BusinessRuleError extends AppError {
 	}
 }
 
-class InternalError extends AppError {
-	readonly type = ERROR_CODES.INTERNAL_ERROR;
-	readonly statusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR;
-
-	static create(message: string): InternalError {
-		return new InternalError(message);
-	}
-}
-
 type AppErrorType =
 	| NotFoundError
-	| ValidationError
 	| EntityValidationError
 	| DocumentValidationError
 	| ExternalApiError
-	| BusinessRuleError
-	| InternalError;
+	| BusinessRuleError;
 
 function isAppError(error: unknown): error is AppErrorType {
 	return error instanceof AppError;
 }
 
 export {
-	AppError,
 	NotFoundError,
-	ValidationError,
 	EntityValidationError,
 	DocumentValidationError,
 	ExternalApiError,
 	BusinessRuleError,
-	InternalError,
 	isAppError,
 };
 
-export type { FieldError, ErrorContext, AppErrorType };
+export type { FieldError };
