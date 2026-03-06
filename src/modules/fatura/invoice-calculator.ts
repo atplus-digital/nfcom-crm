@@ -13,7 +13,6 @@ import type {
 	CalculateInvoiceParams,
 	ClientDetail,
 	InvoicePartner,
-	TipoFaturamento,
 } from "./fatura.schemas";
 import type {
 	BillingTypeConfig,
@@ -29,8 +28,6 @@ export class InvoiceCalculator {
 
 	async calculate(params: CalculateInvoiceParams): Promise<InvoicePartner> {
 		const { partnerId, referenceDate, billingType = "parceiro" } = params;
-
-		this.validateBillingType(billingType);
 
 		const { partner, clients, plans } =
 			await this.dataService.fetchInvoiceData(partnerId);
@@ -68,22 +65,6 @@ export class InvoiceCalculator {
 			clients: processedClients,
 			groupedServices,
 		};
-	}
-
-	private validateBillingType(type: TipoFaturamento): void {
-		const validTypes: TipoFaturamento[] = [
-			"parceiro",
-			"via-parceiro",
-			"cofaturamento",
-			"cliente-final",
-		];
-
-		if (!validTypes.includes(type)) {
-			throw BusinessRuleError.create(
-				`Tipo de faturamento inválido: ${type}. Tipos válidos: ${validTypes.join(", ")}`,
-				{ resource: "Invoice Type" },
-			);
-		}
 	}
 
 	private validateData(

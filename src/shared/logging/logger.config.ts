@@ -60,7 +60,7 @@ const buildRollingFileTransport = (
 const buildPrettyTransport = (level: LogLevel) => ({
 	target: "pino-pretty",
 	level,
-	options: { target: 1 },
+	options: { destination: 1 },
 });
 
 // Logger configuration factory

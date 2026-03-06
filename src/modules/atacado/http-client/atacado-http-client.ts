@@ -1,54 +1,17 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { env } from "@/env";
 import { ExternalApiError } from "@/shared/base.error";
-import { API_HEADERS, HEADERS } from "./atacado.constants";
-
-const ATACADO_ROUTES = {
-	parceiros: "/t_parceiros",
-	clientes: "/t_clientes",
-	planosDeServico: "/t_planos_de_servico",
-	faturas: "/t_nfcom_faturas",
-	cobrancas: "/t_nfcom_cobrancas",
-	notasFiscais: "/t_nfcom_notas",
-} as const;
-
-type AtacadoRoute = (typeof ATACADO_ROUTES)[keyof typeof ATACADO_ROUTES];
-
-interface HttpClientConfig {
-	readonly baseURL: string;
-	readonly apiKey: string;
-	readonly timeout?: number;
-	readonly maxRetries?: number;
-	readonly retryDelay?: number;
-}
-
-interface ApiResponse<T> {
-	readonly data: T;
-}
-
-const DEFAULT_TIMEOUT = 30000;
-const DEFAULT_MAX_RETRIES = 3;
-const DEFAULT_RETRY_DELAY = 1000;
-
-const sleep = (ms: number): Promise<void> =>
-	new Promise((resolve) => setTimeout(resolve, ms));
-
-const extractErrorMessage = (error: unknown): string => {
-	if (axios.isAxiosError(error)) {
-		return error.response?.data?.message ?? error.message;
-	}
-	if (error instanceof Error) {
-		return error.message;
-	}
-	return "Erro desconhecido";
-};
-
-const shouldRetry = (error: unknown): boolean => {
-	if (!axios.isAxiosError(error)) return false;
-	const status = error.response?.status;
-	if (!status) return true;
-	return status >= 500 || status === 429;
-};
+import { API_HEADERS, HEADERS } from "../atacado.constants";
+import { ATACADO_ROUTES, type AtacadoRouteWithSuffix } from "./atacado.routes";
+import type { ApiResponse, HttpClientConfig } from "./types";
+import {
+	DEFAULT_MAX_RETRIES,
+	DEFAULT_RETRY_DELAY,
+	DEFAULT_TIMEOUT,
+	extractErrorMessage,
+	shouldRetry,
+	sleep,
+} from "./utils";
 
 class AtacadoHttpClient {
 	private readonly client: AxiosInstance;
@@ -86,7 +49,7 @@ class AtacadoHttpClient {
 	}
 
 	async get<T>(
-		route: AtacadoRoute,
+		route: AtacadoRouteWithSuffix,
 		config?: AxiosRequestConfig,
 	): Promise<ApiResponse<T>> {
 		return this.executeWithRetry(() =>
@@ -95,7 +58,7 @@ class AtacadoHttpClient {
 	}
 
 	async post<T>(
-		route: AtacadoRoute,
+		route: AtacadoRouteWithSuffix,
 		data?: unknown,
 		config?: AxiosRequestConfig,
 	): Promise<ApiResponse<T>> {

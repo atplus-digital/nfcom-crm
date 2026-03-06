@@ -6,7 +6,7 @@ import type {
 	GroupedService,
 	ProcessedLine,
 } from "../fatura.schemas";
-import { LINES } from "./constants";
+import { LINES, PLANS } from "./constants";
 
 interface PlanInfo {
 	readonly id: string | number;
@@ -45,7 +45,7 @@ const getPlanInfo = (
 	if (
 		!plan ||
 		plan.monthlyValue === 0 ||
-		plan.name === "Cadastrar Plano no Fluxo"
+		plan.name === PLANS.DEFAULT_PLAN_NAME
 	) {
 		throw BusinessRuleError.create(
 			`Plan with ID ${planId} not found or invalid. Client ID: ${clientId}`,
@@ -55,7 +55,7 @@ const getPlanInfo = (
 	return plan;
 };
 
-const isLineActive = (line: Record<string, unknown>): boolean =>
+const isLineActive = (line: { f_status?: string }): boolean =>
 	line.f_status === LINES.STATUS_ACTIVE;
 
 class LineProcessor {
@@ -83,7 +83,7 @@ class LineProcessor {
 		const processedLines: ProcessedLine[] = [];
 
 		for (const line of lines) {
-			if (!isLineActive(line as Record<string, unknown>)) {
+			if (!isLineActive(line)) {
 				continue;
 			}
 

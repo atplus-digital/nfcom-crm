@@ -13,16 +13,18 @@ const prepareInvoiceHandler = async (
 ): Promise<PrepareInvoiceResponse> => {
 	const { f_parceiro, f_data_referencia, f_tipo_de_faturamento } = request.body;
 
+	const dateStr = formatToISODate(f_data_referencia);
+
 	const invoice = await invoiceService.calculate({
 		partnerId: f_parceiro,
-		referenceDate: formatToISODate(f_data_referencia),
+		referenceDate: dateStr,
 		billingType: f_tipo_de_faturamento,
 	});
 
 	const response: PrepareInvoiceResponse = {
 		status: 200,
 		success: true,
-		dateStr: formatToISODate(f_data_referencia),
+		dateStr,
 		date: f_data_referencia,
 		billingType: f_tipo_de_faturamento,
 		data: invoice,

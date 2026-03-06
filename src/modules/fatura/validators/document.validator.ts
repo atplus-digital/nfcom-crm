@@ -3,6 +3,7 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { DocumentValidationError } from "@/shared/base.error";
 import { Failure, type Result, Success } from "@/shared/result";
+import { runValidateAll } from "./validation-utils";
 
 type DocumentType = "CPF" | "CNPJ";
 
@@ -66,19 +67,16 @@ const documentValidator = {
 	},
 
 	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
-		const partnerResult = this.validatePartner(partner);
-
-		if (!partnerResult.success) {
-			throw DocumentValidationError.create(partnerResult.error.message);
-		}
-
-		for (const client of clients) {
-			const clientResult = this.validateClient(client);
-
-			if (!clientResult.success) {
-				throw DocumentValidationError.create(clientResult.error.message);
-			}
-		}
+		runValidateAll<Parceiro, Cliente, DocumentError>({
+			partner,
+			clients,
+			validatePartner: (p) => this.validatePartner(p),
+			validateClient: (c) => this.validateClient(c),
+			buildPartnerError: (_p, error) =>
+				DocumentValidationError.create(error.message),
+			buildClientError: (_c, error) =>
+				DocumentValidationError.create(error.message),
+		});
 	},
 };
 

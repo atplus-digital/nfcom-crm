@@ -2,6 +2,7 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { EntityValidationError, type FieldError } from "@/shared/base.error";
 import { Failure, type Result, Success } from "@/shared/result";
+import { runValidateAll } from "./validation-utils";
 
 type ValidationResult = Result<void, FieldError[]>;
 
@@ -70,27 +71,20 @@ const entityValidator = {
 	},
 
 	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
-		const partnerResult = this.validatePartner(partner);
-
-		if (!partnerResult.success) {
-			throw EntityValidationError.create(
-				"Parceiro",
-				partner.id ?? 0,
-				partnerResult.error,
-			);
-		}
-
-		for (const client of clients) {
-			const clientResult = this.validateClient(client);
-
-			if (!clientResult.success) {
-				throw EntityValidationError.create(
-					`Cliente "${client.f_nome_razao}"`,
-					client.id ?? 0,
-					clientResult.error,
-				);
-			}
-		}
+		runValidateAll<Parceiro, Cliente, FieldError[]>({
+			partner,
+			clients,
+			validatePartner: (p) => this.validatePartner(p),
+			validateClient: (c) => this.validateClient(c),
+			buildPartnerError: (p, errors) =>
+				EntityValidationError.create("Parceiro", p.id ?? 0, errors),
+			buildClientError: (c, errors) =>
+				EntityValidationError.create(
+					`Cliente "${c.f_nome_razao}"`,
+					c.id ?? 0,
+					errors,
+				),
+		});
 	},
 };
 

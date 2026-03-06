@@ -1,6 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { isAppError } from "@/shared/base.error";
 import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
+import { isProduction } from "@/shared/logging/logger.config";
 
 interface ErrorResponse {
 	readonly success: false;
@@ -10,8 +11,6 @@ interface ErrorResponse {
 		readonly details?: unknown;
 	};
 }
-
-const isProduction = process.env.NODE_ENV === "production";
 
 const buildErrorResponse = (
 	code: string,
@@ -69,10 +68,10 @@ export const errorHandler = (
 
 	const response = buildErrorResponse(
 		errorCode,
-		isProduction && statusCode === HTTP_STATUS.INTERNAL_SERVER_ERROR
+		isProduction() && statusCode === HTTP_STATUS.INTERNAL_SERVER_ERROR
 			? "Erro interno do servidor"
 			: error.message,
-		!isProduction ? { stack: error.stack } : undefined,
+		!isProduction() ? { stack: error.stack } : undefined,
 	);
 
 	reply.status(statusCode).send(response);
