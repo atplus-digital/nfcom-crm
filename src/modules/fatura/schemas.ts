@@ -2,9 +2,6 @@ import z from "zod";
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 
-/**
- * Enum representing the types of billing available in the system.
- */
 const TipoFaturamentoEnum = z.enum([
 	"parceiro",
 	"via-parceiro",
@@ -58,21 +55,14 @@ const InvoicePartnerSchema = z.object({
 	groupedServices: z.array(GroupedServiceSchema),
 });
 
-// Domain types with proper entity typing
 export type ProcessedLine = z.infer<typeof ProcessedLineSchema>;
 export type GroupedLine = z.infer<typeof GroupedLineSchema>;
 export type GroupedService = z.infer<typeof GroupedServiceSchema>;
 
-/**
- * Base types from schemas (with unknown for client/partner)
- */
 export type ClientDetailBase = z.infer<typeof ClientDetailSchema>;
 export type PartnerInvoiceBase = z.infer<typeof PartnerInvoiceSchema>;
 export type InvoicePartnerBase = z.infer<typeof InvoicePartnerSchema>;
 
-/**
- * Domain types with proper entity typing (with Cliente/Parceiro instead of unknown)
- */
 export interface ClientDetail extends Omit<ClientDetailBase, "client"> {
 	readonly client: Cliente;
 }
@@ -93,7 +83,6 @@ export interface CalculateInvoiceParams {
 	readonly billingType?: TipoFaturamento;
 }
 
-// Re-export all schemas for convenience
 export {
 	TipoFaturamentoEnum,
 	ProcessedLineSchema,
