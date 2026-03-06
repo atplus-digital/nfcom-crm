@@ -1,6 +1,6 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { isAppError } from "@/infra/http/base.error";
-import { ERROR_CODES, HTTP_STATUS } from "@/infra/constants";
+import { ERROR_CODES, HTTP_STATUS } from "@/infra/http/constants";
 
 interface ErrorResponse {
 	readonly success: false;

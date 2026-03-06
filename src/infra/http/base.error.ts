@@ -1,4 +1,4 @@
-import { ERROR_CODES, HTTP_STATUS } from "@/infra/constants";
+import { ERROR_CODES, HTTP_STATUS } from "@/infra/http/constants";
 
 interface FieldError {
 	readonly field: string;
@@ -65,7 +65,7 @@ class EntityValidationError extends AppError {
 		identifier: string | number,
 		fields: readonly FieldError[],
 	): EntityValidationError {
-		const fieldNames = fields.map((f) => f.label).join(", ");
+		const fieldNames = fields.map(f => f.label).join(", ");
 		const message = `${entityName} "${identifier}" com dados inválidos: ${fieldNames}`;
 		return new EntityValidationError(message, {
 			resource: entityName,
