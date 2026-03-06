@@ -5,7 +5,7 @@ import {
 	preparaFaturaSchema,
 } from "./prepara-fatura.schemas";
 
-const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
+const preparaFaturaRoutes: FastifyPluginAsync = async server => {
 	server.post("/prepara-fatura", {
 		schema: {
 			body: preparaFaturaSchema,

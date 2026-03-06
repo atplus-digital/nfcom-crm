@@ -15,8 +15,8 @@ type PlanLookup = Map<string | number, PlanInfo>;
 const buildPlanLookup = (plans: readonly PlanoDeServico[]): PlanLookup => {
 	return new Map(
 		plans
-			.filter((plan) => plan.id !== undefined)
-			.map((plan) => [
+			.filter(plan => plan.id !== undefined)
+			.map(plan => [
 				plan.id as string | number,
 				{
 					id: plan.id as string | number,
