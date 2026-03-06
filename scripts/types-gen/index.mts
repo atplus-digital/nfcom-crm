@@ -1,6 +1,6 @@
-import { main } from "./main.mts";
+import { runGenerator } from "./main.mts";
 
-main().catch((error) => {
-	console.error("Erro ao gerar schemas:", error);
+runGenerator().catch(error => {
+	console.error("Error generating schemas:", error);
 	process.exit(1);
 });

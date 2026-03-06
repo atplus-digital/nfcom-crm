@@ -1,49 +1,77 @@
 import { rm, rmdir } from "node:fs/promises";
 import { generate } from "orval";
-import { prepareEntries } from "./prepare-entries.mts";
-import { buildFkMap, buildParentRelationsMap } from "./maps.mts";
-import { extractMainInterface } from "./extractor.mts";
-import { TEMP_DIR } from "./constants.mts";
+import {
+	defaultConfig,
+	GenerationConfig,
+	resolveOutputPath,
+} from "./config/generation.mts";
+import { loadCollectionEntries, loadRelationMaps } from "./loaders/index.mts";
+import { extractMainInterface } from "./services/extractor.mts";
+import type { GenerationResult } from "./config/types.mts";
+
+export interface GeneratorOptions {
+	config?: Partial<GenerationConfig>;
+	onProgress?: (name: string, status: "start" | "success" | "error") => void;
+	onComplete?: (results: GenerationResult[]) => void;
+}
+
+export async function runGenerator(
+	options: GeneratorOptions = {},
+): Promise<GenerationResult[]> {
+	const config: GenerationConfig = { ...defaultConfig, ...options.config };
+	const results: GenerationResult[] = [];
+
+	console.log(`🚀 Starting type generation`);
+	console.log(`📁 Output: ${config.outputDir}`);
+	console.log(`📁 Temp: ${config.tempDir}`);
+
+	const entries = await loadCollectionEntries(config);
+
+	if (entries.length === 0) {
+		console.warn("⚠️  No collections were processed");
+		return results;
+	}
+
+	console.log(`\n⚙️  Generating ${entries.length} schema(s)...`);
+	const { fkMap, parentRelationsMap } = loadRelationMaps();
+
+	for (const { name, config: orvalConfig } of entries) {
+		options.onProgress?.(name, "start");
+
+		try {
+			await generate(orvalConfig);
+			const outputPath = resolveOutputPath(name, config);
+
+			await extractMainInterface(outputPath, name, fkMap, parentRelationsMap);
+
+			results.push({ name, success: true, outputPath });
+			options.onProgress?.(name, "success");
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : "Unknown error";
+			results.push({ name, success: false, error: errorMsg });
+			options.onProgress?.(name, "error");
+		}
+	}
+
+	const successCount = results.filter(r => r.success).length;
+	console.log(
+		`\n✨ ${successCount}/${entries.length} schema(s) generated successfully`,
+	);
+
+	await rm(config.tempDir, { recursive: true, force: true });
+	await rmdir(config.tempDir).catch(() => {});
+
+	options.onComplete?.(results);
+
+	return results;
+}
 
 export async function main(): Promise<void> {
 	try {
-		// eslint-disable-next-line no-console
-		console.log(`🚀 Iniciando geração de schemas`);
-
-		const entries = await prepareEntries();
-
-		if (entries.length === 0) {
-			console.warn("⚠️  Nenhuma collection foi processada");
-			return;
-		}
-
-		console.log(`\n⚙️  Gerando ${entries.length} schema(s)...`);
-		const fkMap = buildFkMap();
-		const parentRelationsMap = buildParentRelationsMap();
-
-		await Promise.all(
-			entries.map(async ({ name, config }) => {
-				await generate(config);
-				const outputPath =
-					typeof config.output === "object" ? config.output?.target : undefined;
-				if (outputPath) {
-					await extractMainInterface(
-						outputPath,
-						name,
-						fkMap,
-						parentRelationsMap
-					);
-				}
-			})
-		);
-
-		console.log(`\n✨ ${entries.length} schema(s) gerado(s) com sucesso`);
+		await runGenerator();
 	} catch (error) {
-		console.error("❌ Erro:", error);
+		console.error("❌ Error:", error);
 		process.exit(1);
-	} finally {
-		await rm(TEMP_DIR, { recursive: true, force: true });
-		await rmdir(TEMP_DIR).catch(() => {});
 	}
 
 	process.exit(0);

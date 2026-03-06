@@ -15,7 +15,7 @@ import type {
 	ClientDetail,
 	InvoicePartner,
 	TipoFaturamento,
-} from "./domain/types";
+} from "./schemas";
 
 /**
  * Interface para o serviço de dados da fatura

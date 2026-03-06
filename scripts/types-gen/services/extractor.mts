@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import type { ParentVirtualField } from "./types.mts";
+import type { ParentVirtualField } from "../config/types.mts";
 
 export async function extractMainInterface(
 	filePath: string,

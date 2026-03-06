@@ -1,6 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
-import type { GenerationConfig } from "../config/generation.js";
-import { createSwaggerClient } from "./swagger-client.js";
+import type { GenerationConfig } from "../config/generation.mts";
+import { createSwaggerClient } from "./swagger-client.mts";
 
 export async function fetchSwaggerSpec(
 	name: string,

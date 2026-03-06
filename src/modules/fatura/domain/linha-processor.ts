@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { BusinessRuleError } from "@/shared/base.error";
+import type { GroupedLine, GroupedService, ProcessedLine } from "../schemas";
 import { LINES } from "./constants";
-import type { GroupedLine, GroupedService, ProcessedLine } from "./types";
 
 interface PlanInfo {
 	readonly id: string | number;

@@ -1,5 +1,5 @@
 import type { Options } from "orval";
-import type { GenerationConfig } from "../config/generation.js";
+import type { GenerationConfig } from "../config/generation.mts";
 
 export function buildOrvalConfig(
 	inputPath: string,
