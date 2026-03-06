@@ -1,5 +1,5 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
-import type { ClientDetail, ProcessedLine } from "../schemas";
+import type { ClientDetail, ProcessedLine } from "../fatura.schemas";
 import { LineProcessor } from "./linha-processor";
 
 function createClientDetail(

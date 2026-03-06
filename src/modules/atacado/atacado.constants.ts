@@ -10,3 +10,8 @@ export const API_HEADERS = {
 	[HEADERS.ACCEPT]: "application/json",
 	[HEADERS.X_APP]: "a_atacado",
 } as const;
+
+export const PAGINATION = {
+	DEFAULT_PAGE_SIZE: 9999,
+	MAX_PAGE_SIZE: 9999,
+} as const;

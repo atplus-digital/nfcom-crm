@@ -1,7 +1,11 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { BusinessRuleError } from "@/shared/base.error";
-import type { GroupedLine, GroupedService, ProcessedLine } from "../schemas";
+import type {
+	GroupedLine,
+	GroupedService,
+	ProcessedLine,
+} from "../fatura.schemas";
 import { LINES } from "./constants";
 
 interface PlanInfo {

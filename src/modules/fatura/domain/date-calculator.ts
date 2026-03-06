@@ -6,7 +6,7 @@ import {
 	parseISO,
 	setDate,
 } from "date-fns";
-import { DATES } from "../constants";
+import { DATES } from "../fatura.constants";
 
 function formatToISODate(date: Date): string {
 	return format(date, "yyyy-MM-dd");

@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { env } from "@/env";
 import { ExternalApiError } from "@/shared/base.error";
-import { API_HEADERS, HEADERS } from "./constants";
+import { API_HEADERS, HEADERS } from "./atacado.constants";
 
 const ATACADO_ROUTES = {
 	parceiros: "/t_parceiros",
@@ -86,7 +86,7 @@ class AtacadoHttpClient {
 	}
 
 	async get<T>(
-		route: AtacadoRoute | string,
+		route: AtacadoRoute,
 		config?: AxiosRequestConfig,
 	): Promise<ApiResponse<T>> {
 		return this.executeWithRetry(() =>
@@ -95,7 +95,7 @@ class AtacadoHttpClient {
 	}
 
 	async post<T>(
-		route: AtacadoRoute | string,
+		route: AtacadoRoute,
 		data?: unknown,
 		config?: AxiosRequestConfig,
 	): Promise<ApiResponse<T>> {
