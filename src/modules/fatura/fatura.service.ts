@@ -6,137 +6,130 @@ import { documentValidator } from "@/modules/fatura/validators/document.validato
 import { entityValidator } from "@/modules/fatura/validators/entity.validator";
 import { NotFoundError } from "@/shared/base.error";
 import { DATES } from "./constants";
-import { criarDetalheCliente } from "./domain/cliente-builder";
-import { calcularVencimento } from "./domain/date-calculator";
-import { LinhaProcessor } from "./domain/linha-processor";
-import { criarFaturaParceiro } from "./domain/parceiro-builder";
+import { createClientDetail } from "./domain/cliente-builder";
+import { calculateDueDate } from "./domain/date-calculator";
+import { LineProcessor } from "./domain/linha-processor";
+import { createPartnerInvoice } from "./domain/parceiro-builder";
 import type {
-	CalcularFaturaParams,
-	DetalheCliente,
-	FaturaParceiro,
+	CalculateInvoiceParams,
+	ClientDetail,
+	InvoicePartner,
 } from "./domain/types";
 
-interface FaturaDataService {
-	buscarDadosFatura(parceiroId: string | number): Promise<{
-		parceiro: Parceiro;
-		clientes: readonly Cliente[];
-		planos: readonly PlanoDeServico[];
+interface InvoiceDataService {
+	fetchInvoiceData(partnerId: string | number): Promise<{
+		partner: Parceiro;
+		clients: readonly Cliente[];
+		plans: readonly PlanoDeServico[];
 	}>;
 }
 
-class AtacadoFaturaDataService implements FaturaDataService {
-	async buscarDadosFatura(parceiroId: string | number) {
-		const [parceiro, clientes, planos] = await Promise.all([
-			atacadoRepository.findParceiroById(parceiroId),
+class AtacadoInvoiceDataService implements InvoiceDataService {
+	async fetchInvoiceData(partnerId: string | number) {
+		const [partner, clients, plans] = await Promise.all([
+			atacadoRepository.findParceiroById(partnerId),
 			atacadoRepository.findClientesAtivosByParceiroId({
-				parceiroId,
+				parceiroId: partnerId,
 				linhaStatusAtiva: true,
 			}),
 			atacadoRepository.findAllPlanosDeServico(),
 		]);
 
-		return { parceiro, clientes, planos };
+		return { partner, clients, plans };
 	}
 }
 
-class FaturaCalculator {
-	private readonly dataService: FaturaDataService;
+class InvoiceCalculator {
+	private readonly dataService: InvoiceDataService;
 
-	constructor(dataService: FaturaDataService) {
+	constructor(dataService: InvoiceDataService) {
 		this.dataService = dataService;
 	}
 
-	async calcular(params: CalcularFaturaParams): Promise<FaturaParceiro> {
-		const { parceiroId, dataReferencia } = params;
+	async calculate(params: CalculateInvoiceParams): Promise<InvoicePartner> {
+		const { partnerId, referenceDate } = params;
 
-		const { parceiro, clientes, planos } =
-			await this.dataService.buscarDadosFatura(parceiroId);
+		const { partner, clients, plans } =
+			await this.dataService.fetchInvoiceData(partnerId);
 
-		this.validarDados(parceiro, clientes, planos);
+		this.validateData(partner, clients, plans);
 
-		const linhaProcessor = LinhaProcessor.create(planos);
-		const clientesProcessados = this.processarClientes(
-			clientes,
-			linhaProcessor,
-		);
+		const lineProcessor = LineProcessor.create(plans);
+		const processedClients = this.processClients(clients, lineProcessor);
 
-		const totalFatura = this.calcularTotal(clientesProcessados);
-		const totalLinhas = this.calcularTotalLinhas(clientesProcessados);
-		const dataVencimento = this.calcularDataVencimento(
-			parceiro,
-			dataReferencia,
-		);
-		const servicosAgrupados =
-			LinhaProcessor.agruparServicos(clientesProcessados);
+		const invoiceTotal = this.calculateTotal(processedClients);
+		const totalLines = this.calculateTotalLines(processedClients);
+		const dueDate = this.calculateInvoiceDueDate(partner, referenceDate);
+		const groupedServices = LineProcessor.groupServices(processedClients);
 
-		const parceiroFatura = criarFaturaParceiro(
-			parceiro,
-			totalFatura,
-			clientesProcessados.length,
-			totalLinhas,
+		const partnerInvoice = createPartnerInvoice(
+			partner,
+			invoiceTotal,
+			processedClients.length,
+			totalLines,
 		);
 
 		return {
-			dataVencimento,
-			totalFatura,
-			totalLinhas,
-			parceiro: parceiroFatura,
-			clientes: clientesProcessados,
-			servicosAgrupados,
+			dueDate,
+			invoiceTotal,
+			totalLines,
+			partner: partnerInvoice,
+			clients: processedClients,
+			groupedServices,
 		};
 	}
 
-	private validarDados(
-		parceiro: Parceiro,
-		clientes: readonly Cliente[],
-		planos: readonly PlanoDeServico[],
+	private validateData(
+		partner: Parceiro,
+		clients: readonly Cliente[],
+		plans: readonly PlanoDeServico[],
 	): void {
-		if (clientes.length === 0) {
-			throw NotFoundError.create("Clientes ativos", parceiro.id ?? 0);
+		if (clients.length === 0) {
+			throw NotFoundError.create("Active clients", partner.id ?? 0);
 		}
 
-		if (planos.length === 0) {
-			throw NotFoundError.create("Planos de serviço", "");
+		if (plans.length === 0) {
+			throw NotFoundError.create("Service plans", "");
 		}
 
-		entityValidator.validateAll(parceiro, clientes);
-		documentValidator.validateAll(parceiro, clientes);
+		entityValidator.validateAll(partner, clients);
+		documentValidator.validateAll(partner, clients);
 	}
 
-	private processarClientes(
-		clientes: readonly Cliente[],
-		linhaProcessor: LinhaProcessor,
-	): DetalheCliente[] {
-		const processados: DetalheCliente[] = [];
+	private processClients(
+		clients: readonly Cliente[],
+		lineProcessor: LineProcessor,
+	): ClientDetail[] {
+		const processed: ClientDetail[] = [];
 
-		for (const cliente of clientes) {
-			const { linhas, total } = linhaProcessor.processarLinhasCliente(cliente);
+		for (const client of clients) {
+			const { lines, total } = lineProcessor.processClientLines(client);
 
-			if (linhas.length > 0) {
-				processados.push(criarDetalheCliente(cliente, linhas, total));
+			if (lines.length > 0) {
+				processed.push(createClientDetail(client, lines, total));
 			}
 		}
 
-		return processados;
+		return processed;
 	}
 
-	private calcularTotal(clientes: readonly DetalheCliente[]): number {
-		return clientes.reduce((sum, c) => sum + c.total, 0);
+	private calculateTotal(clients: readonly ClientDetail[]): number {
+		return clients.reduce((sum, c) => sum + c.total, 0);
 	}
 
-	private calcularTotalLinhas(clientes: readonly DetalheCliente[]): number {
-		return clientes.reduce((sum, c) => sum + c.totalLinhas, 0);
+	private calculateTotalLines(clients: readonly ClientDetail[]): number {
+		return clients.reduce((sum, c) => sum + c.totalLines, 0);
 	}
 
-	private calcularDataVencimento(
-		parceiro: Parceiro,
-		dataReferencia: string,
+	private calculateInvoiceDueDate(
+		partner: Parceiro,
+		referenceDate: string,
 	): string {
-		const diaVencimento = parceiro.f_data_vencimento ?? DATES.DEFAULT_DUE_DAY;
-		return calcularVencimento(dataReferencia, diaVencimento);
+		const dueDay = partner.f_data_vencimento ?? DATES.DEFAULT_DUE_DAY;
+		return calculateDueDate(referenceDate, dueDay);
 	}
 }
 
-const faturaService = new FaturaCalculator(new AtacadoFaturaDataService());
+const invoiceService = new InvoiceCalculator(new AtacadoInvoiceDataService());
 
-export { faturaService, FaturaCalculator, AtacadoFaturaDataService };
+export { invoiceService, InvoiceCalculator, AtacadoInvoiceDataService };

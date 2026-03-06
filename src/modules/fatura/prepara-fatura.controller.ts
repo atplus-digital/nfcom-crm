@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { faturaService } from "@/modules/fatura/fatura.service";
+import { invoiceService } from "@/modules/fatura/fatura.service";
 import type { PreparaFaturaBody } from "@/routes/prepara-fatura/prepara-fatura.schemas";
 
 export const preparaFaturaHandler = async (
@@ -8,9 +8,9 @@ export const preparaFaturaHandler = async (
 ): Promise<void> => {
 	const { f_parceiro, f_data_referencia } = request.body;
 
-	const fatura = await faturaService.calcular({
-		parceiroId: f_parceiro,
-		dataReferencia: f_data_referencia.toISOString().slice(0, 10),
+	const invoice = await invoiceService.calculate({
+		partnerId: f_parceiro,
+		referenceDate: f_data_referencia.toISOString().slice(0, 10),
 	});
 
 	return reply.status(200).send({
@@ -18,6 +18,6 @@ export const preparaFaturaHandler = async (
 		dateStr: f_data_referencia.toISOString().slice(0, 10),
 		date: f_data_referencia,
 		success: true,
-		data: fatura,
+		data: invoice,
 	});
 };

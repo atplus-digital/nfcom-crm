@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { preparaFaturaHandler } from "./prepara-fatura.controller";
+import { prepareInvoiceHandler } from "./prepara-fatura.controller";
 import {
 	preparaFaturaResponseSchema,
 	preparaFaturaSchema,
@@ -13,7 +13,7 @@ const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
 				200: preparaFaturaResponseSchema,
 			},
 		},
-		handler: preparaFaturaHandler,
+		handler: prepareInvoiceHandler,
 	});
 };
 

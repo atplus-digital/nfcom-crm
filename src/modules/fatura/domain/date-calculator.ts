@@ -1,6 +1,6 @@
 import {
-	addDays,
-	addMonths,
+	addDays as addDaysFns,
+	addMonths as addMonthsFns,
 	format,
 	isBefore,
 	parseISO,
@@ -16,35 +16,32 @@ function parseLocalDate(dateString: string): Date {
 	return parseISO(dateString);
 }
 
-function addMeses(date: Date, months: number): Date {
-	return addMonths(date, months);
+function addMonths(date: Date, months: number): Date {
+	return addMonthsFns(date, months);
 }
 
-function addDias(date: Date, days: number): Date {
-	return addDays(date, days);
+function addDays(date: Date, days: number): Date {
+	return addDaysFns(date, days);
 }
 
-function calcularVencimento(
-	dataReferencia: string,
-	diaVencimento: number,
-): string {
-	const hoje = new Date();
-	const limiteMinimo = addDays(hoje, DATES.MIN_DAYS_TO_DUE_DATE);
+function calculateDueDate(referenceDate: string, dueDay: number): string {
+	const today = new Date();
+	const minimumLimit = addDaysFns(today, DATES.MIN_DAYS_TO_DUE_DATE);
 
-	const dataRef = parseLocalDate(dataReferencia);
-	let vencimento = setDate(addMonths(dataRef, 1), diaVencimento);
+	const refDate = parseLocalDate(referenceDate);
+	let dueDate = setDate(addMonthsFns(refDate, 1), dueDay);
 
-	if (isBefore(vencimento, limiteMinimo)) {
-		vencimento = limiteMinimo;
+	if (isBefore(dueDate, minimumLimit)) {
+		dueDate = minimumLimit;
 	}
 
-	return formatToISODate(vencimento);
+	return formatToISODate(dueDate);
 }
 
 export {
 	formatToISODate,
 	parseLocalDate,
-	addMeses,
-	addDias,
-	calcularVencimento,
+	addMonths,
+	addDays,
+	calculateDueDate,
 };

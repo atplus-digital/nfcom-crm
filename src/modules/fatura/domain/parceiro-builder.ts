@@ -1,18 +1,18 @@
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import type { ParceiroFatura } from "./types";
+import type { PartnerInvoice } from "./types";
 
-function criarFaturaParceiro(
-	parceiro: Parceiro,
-	totalFatura: number,
-	totalClientes: number,
-	totalLinhas: number,
-): ParceiroFatura {
+function createPartnerInvoice(
+	partner: Parceiro,
+	invoiceTotal: number,
+	totalClients: number,
+	totalLines: number,
+): PartnerInvoice {
 	return {
-		parceiro,
-		totalFatura,
-		totalClientes,
-		totalLinhas,
+		partner,
+		invoiceTotal,
+		totalClients,
+		totalLines,
 	};
 }
 
-export { criarFaturaParceiro };
+export { createPartnerInvoice };

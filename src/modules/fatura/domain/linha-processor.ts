@@ -2,168 +2,164 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { BusinessRuleError } from "@/shared/base.error";
 import { LINES } from "./constants";
-import type { LinhaAgrupada, LinhaProcessada, ServicoAgrupado } from "./types";
+import type { GroupedLine, GroupedService, ProcessedLine } from "./types";
 
-interface PlanoInfo {
+interface PlanInfo {
 	readonly id: string | number;
-	readonly nome: string;
-	readonly valorMensal: number;
+	readonly name: string;
+	readonly monthlyValue: number;
 }
 
-type PlanoLookup = Map<string | number, PlanoInfo>;
+type PlanLookup = Map<string | number, PlanInfo>;
 
-const buildPlanoLookup = (planos: readonly PlanoDeServico[]): PlanoLookup => {
+const buildPlanLookup = (plans: readonly PlanoDeServico[]): PlanLookup => {
 	return new Map(
-		planos
-			.filter((plano) => plano.id !== undefined)
-			.map((plano) => [
-				plano.id as string | number,
+		plans
+			.filter((plan) => plan.id !== undefined)
+			.map((plan) => [
+				plan.id as string | number,
 				{
-					id: plano.id as string | number,
-					nome: plano.f_nome ?? "",
-					valorMensal: Number(plano.f_assinatura_mensal) || 0,
+					id: plan.id as string | number,
+					name: plan.f_nome ?? "",
+					monthlyValue: Number(plan.f_assinatura_mensal) || 0,
 				},
 			]),
 	);
 };
 
-const getPlanoInfo = (
-	planoId: string | number | undefined,
-	lookup: PlanoLookup,
-	clienteId: string | number | undefined,
-): PlanoInfo => {
-	if (!planoId) {
-		throw BusinessRuleError.create(
-			`ID do plano é inválido para cliente ${clienteId}`,
-		);
+const getPlanInfo = (
+	planId: string | number | undefined,
+	lookup: PlanLookup,
+	clientId: string | number | undefined,
+): PlanInfo => {
+	if (!planId) {
+		throw BusinessRuleError.create(`Invalid plan ID for client ${clientId}`);
 	}
 
-	const plano = lookup.get(planoId);
+	const plan = lookup.get(planId);
 
 	if (
-		!plano ||
-		plano.valorMensal === 0 ||
-		plano.nome === "Cadastrar Plano no Fluxo"
+		!plan ||
+		plan.monthlyValue === 0 ||
+		plan.name === "Cadastrar Plano no Fluxo"
 	) {
 		throw BusinessRuleError.create(
-			`Plano com ID ${planoId} não encontrado ou inválido. ID Cliente: ${clienteId}`,
+			`Plan with ID ${planId} not found or invalid. Client ID: ${clientId}`,
 		);
 	}
 
-	return plano;
+	return plan;
 };
 
-const isLinhaAtiva = (linha: Record<string, unknown>): boolean =>
-	linha.f_status === LINES.STATUS_ACTIVE;
+const isLineActive = (line: Record<string, unknown>): boolean =>
+	line.f_status === LINES.STATUS_ACTIVE;
 
-class LinhaProcessor {
-	private constructor(private readonly planoLookup: PlanoLookup) {
-		this.planoLookup = planoLookup;
+class LineProcessor {
+	private constructor(private readonly planLookup: PlanLookup) {
+		this.planLookup = planLookup;
 	}
 
-	static create(planos: readonly PlanoDeServico[]): LinhaProcessor {
-		return new LinhaProcessor(buildPlanoLookup(planos));
+	static create(plans: readonly PlanoDeServico[]): LineProcessor {
+		return new LineProcessor(buildPlanLookup(plans));
 	}
 
-	processarLinhasCliente(cliente: Cliente): {
-		readonly linhas: LinhaProcessada[];
+	processClientLines(client: Cliente): {
+		readonly lines: ProcessedLine[];
 		readonly total: number;
 	} {
-		const linhas = cliente.f_linhas_fixas;
+		const lines = client.f_linhas_fixas;
 
-		if (!linhas || linhas.length === 0) {
+		if (!lines || lines.length === 0) {
 			throw BusinessRuleError.create(
-				`Cliente ${cliente.id} - ${cliente.f_nome_razao} não possui linhas fixas`,
+				`Client ${client.id} - ${client.f_nome_razao} has no fixed lines`,
 			);
 		}
 
 		let total = 0;
-		const linhasProcessadas: LinhaProcessada[] = [];
+		const processedLines: ProcessedLine[] = [];
 
-		for (const linha of linhas) {
-			if (!isLinhaAtiva(linha as Record<string, unknown>)) {
+		for (const line of lines) {
+			if (!isLineActive(line as Record<string, unknown>)) {
 				continue;
 			}
 
-			const planoId = linha[LINES.PLAN_ID_FIELD as keyof typeof linha] as
+			const planId = line[LINES.PLAN_ID_FIELD as keyof typeof line] as
 				| string
 				| number
 				| undefined;
-			const planoInfo = getPlanoInfo(planoId, this.planoLookup, cliente.id);
+			const planInfo = getPlanInfo(planId, this.planLookup, client.id);
 
-			linhasProcessadas.push({
-				id: linha.id ?? 0,
-				planoId: planoId ?? 0,
-				unitario: planoInfo.valorMensal,
-				descricao: planoInfo.nome,
+			processedLines.push({
+				id: line.id ?? 0,
+				planId: planId ?? 0,
+				unitPrice: planInfo.monthlyValue,
+				description: planInfo.name,
 			});
-			total += planoInfo.valorMensal;
+			total += planInfo.monthlyValue;
 		}
 
-		return { linhas: linhasProcessadas, total };
+		return { lines: processedLines, total };
 	}
 
-	static agruparLinhasPorPlano(
-		linhas: readonly LinhaProcessada[],
-	): LinhaAgrupada[] {
-		const agrupadas = new Map<string | number, LinhaAgrupada>();
+	static groupLinesByPlan(lines: readonly ProcessedLine[]): GroupedLine[] {
+		const grouped = new Map<string | number, GroupedLine>();
 
-		for (const linha of linhas) {
-			const existente = agrupadas.get(linha.planoId);
+		for (const line of lines) {
+			const existing = grouped.get(line.planId);
 
-			if (existente) {
-				agrupadas.set(linha.planoId, {
-					...linha,
-					quantidade: existente.quantidade + 1,
-					total: existente.total + linha.unitario,
+			if (existing) {
+				grouped.set(line.planId, {
+					...line,
+					quantity: existing.quantity + 1,
+					total: existing.total + line.unitPrice,
 				});
 			} else {
-				agrupadas.set(linha.planoId, {
-					...linha,
-					quantidade: 1,
-					total: linha.unitario,
+				grouped.set(line.planId, {
+					...line,
+					quantity: 1,
+					total: line.unitPrice,
 				});
 			}
 		}
 
-		return Array.from(agrupadas.values());
+		return Array.from(grouped.values());
 	}
 
-	static agruparServicos(
-		clientes: readonly { readonly linhas: readonly LinhaProcessada[] }[],
-	): ServicoAgrupado[] {
-		const servicosMap = new Map<
+	static groupServices(
+		clients: readonly { readonly lines: readonly ProcessedLine[] }[],
+	): GroupedService[] {
+		const servicesMap = new Map<
 			string | number,
-			{ nome: string; custo: number; quantidade: number }
+			{ name: string; cost: number; quantity: number }
 		>();
 
-		for (const cliente of clientes) {
-			for (const linha of cliente.linhas) {
-				const existente = servicosMap.get(linha.planoId);
+		for (const client of clients) {
+			for (const line of client.lines) {
+				const existing = servicesMap.get(line.planId);
 
-				if (existente) {
-					servicosMap.set(linha.planoId, {
-						...existente,
-						quantidade: existente.quantidade + 1,
+				if (existing) {
+					servicesMap.set(line.planId, {
+						...existing,
+						quantity: existing.quantity + 1,
 					});
 				} else {
-					servicosMap.set(linha.planoId, {
-						nome: linha.descricao,
-						custo: linha.unitario,
-						quantidade: 1,
+					servicesMap.set(line.planId, {
+						name: line.description,
+						cost: line.unitPrice,
+						quantity: 1,
 					});
 				}
 			}
 		}
 
-		return Array.from(servicosMap.entries()).map(([planoId, servico]) => ({
-			planoId,
-			descricao: servico.nome,
-			unitario: servico.custo,
-			quantidade: servico.quantidade,
-			total: servico.custo * servico.quantidade,
+		return Array.from(servicesMap.entries()).map(([planId, service]) => ({
+			planId,
+			description: service.name,
+			unitPrice: service.cost,
+			quantity: service.quantity,
+			total: service.cost * service.quantity,
 		}));
 	}
 }
 
-export { LinhaProcessor };
+export { LineProcessor };

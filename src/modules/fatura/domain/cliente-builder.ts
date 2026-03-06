@@ -1,21 +1,21 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
-import { LinhaProcessor } from "./linha-processor";
-import type { DetalheCliente, LinhaProcessada } from "./types";
+import { LineProcessor } from "./linha-processor";
+import type { ClientDetail, ProcessedLine } from "./types";
 
-function criarDetalheCliente(
-	cliente: Cliente,
-	linhas: readonly LinhaProcessada[],
+function createClientDetail(
+	client: Cliente,
+	lines: readonly ProcessedLine[],
 	total: number,
-): DetalheCliente {
-	const linhasAgrupadas = LinhaProcessor.agruparLinhasPorPlano(linhas);
+): ClientDetail {
+	const groupedLines = LineProcessor.groupLinesByPlan(lines);
 
 	return {
-		cliente,
+		client,
 		total,
-		totalLinhas: linhas.length,
-		linhas,
-		linhasAgrupadas,
+		totalLines: lines.length,
+		lines,
+		groupedLines,
 	};
 }
 
-export { criarDetalheCliente };
+export { createClientDetail };

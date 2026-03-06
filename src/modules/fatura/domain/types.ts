@@ -1,61 +1,61 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 
-interface LinhaProcessada {
+interface ProcessedLine {
 	readonly id: string | number;
-	readonly planoId: string | number;
-	readonly unitario: number;
-	readonly descricao: string;
+	readonly planId: string | number;
+	readonly unitPrice: number;
+	readonly description: string;
 }
 
-interface LinhaAgrupada extends LinhaProcessada {
-	readonly quantidade: number;
+interface GroupedLine extends ProcessedLine {
+	readonly quantity: number;
 	readonly total: number;
 }
 
-interface ServicoAgrupado {
-	readonly planoId: string | number;
-	readonly descricao: string;
-	readonly unitario: number;
-	readonly quantidade: number;
+interface GroupedService {
+	readonly planId: string | number;
+	readonly description: string;
+	readonly unitPrice: number;
+	readonly quantity: number;
 	readonly total: number;
 }
 
-interface DetalheCliente {
-	readonly cliente: Cliente;
+interface ClientDetail {
+	readonly client: Cliente;
 	readonly total: number;
-	readonly totalLinhas: number;
-	readonly linhas: readonly LinhaProcessada[];
-	readonly linhasAgrupadas: readonly LinhaAgrupada[];
+	readonly totalLines: number;
+	readonly lines: readonly ProcessedLine[];
+	readonly groupedLines: readonly GroupedLine[];
 }
 
-interface ParceiroFatura {
-	readonly parceiro: Parceiro;
-	readonly totalFatura: number;
-	readonly totalClientes: number;
-	readonly totalLinhas: number;
+interface PartnerInvoice {
+	readonly partner: Parceiro;
+	readonly invoiceTotal: number;
+	readonly totalClients: number;
+	readonly totalLines: number;
 }
 
-interface FaturaParceiro {
-	readonly dataVencimento: string;
-	readonly totalFatura: number;
-	readonly totalLinhas: number;
-	readonly parceiro: ParceiroFatura;
-	readonly clientes: readonly DetalheCliente[];
-	readonly servicosAgrupados: readonly ServicoAgrupado[];
+interface InvoicePartner {
+	readonly dueDate: string;
+	readonly invoiceTotal: number;
+	readonly totalLines: number;
+	readonly partner: PartnerInvoice;
+	readonly clients: readonly ClientDetail[];
+	readonly groupedServices: readonly GroupedService[];
 }
 
-interface CalcularFaturaParams {
-	readonly parceiroId: string | number;
-	readonly dataReferencia: string;
+interface CalculateInvoiceParams {
+	readonly partnerId: string | number;
+	readonly referenceDate: string;
 }
 
 export type {
-	LinhaProcessada,
-	LinhaAgrupada,
-	ServicoAgrupado,
-	DetalheCliente,
-	ParceiroFatura,
-	FaturaParceiro,
-	CalcularFaturaParams,
+	ProcessedLine,
+	GroupedLine,
+	GroupedService,
+	ClientDetail,
+	PartnerInvoice,
+	InvoicePartner,
+	CalculateInvoiceParams,
 };

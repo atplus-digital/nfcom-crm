@@ -73,7 +73,7 @@ const createLoggerConfig = (): LoggerConfig => {
 		transport: {
 			targets: [
 				buildRollingFileTransport("error", "error/error"),
-				buildRollingFileTransport(production ? "info" : "trace", "info/log"),
+				buildRollingFileTransport(production ? "warn" : "trace", "info/log"),
 				buildPrettyTransport(production ? "warn" : "trace"),
 			],
 		},

@@ -1,9 +1,9 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { formatToISODate } from "@/modules/fatura/domain/date-calculator";
-import { faturaService } from "@/modules/fatura/fatura.service";
+import { invoiceService } from "@/modules/fatura/fatura.service";
 import type { PreparaFaturaBody } from "./prepara-fatura.schemas";
 
-interface PreparaFaturaResponse {
+interface PrepareInvoiceResponse {
 	readonly status: 200;
 	readonly success: true;
 	readonly dateStr: string;
@@ -11,26 +11,26 @@ interface PreparaFaturaResponse {
 	readonly data: unknown;
 }
 
-const preparaFaturaHandler = async (
+const prepareInvoiceHandler = async (
 	request: FastifyRequest<{ Body: PreparaFaturaBody }>,
 	reply: FastifyReply,
-): Promise<PreparaFaturaResponse> => {
+): Promise<PrepareInvoiceResponse> => {
 	const { f_parceiro, f_data_referencia } = request.body;
 
-	const fatura = await faturaService.calcular({
-		parceiroId: f_parceiro,
-		dataReferencia: formatToISODate(f_data_referencia),
+	const invoice = await invoiceService.calculate({
+		partnerId: f_parceiro,
+		referenceDate: formatToISODate(f_data_referencia),
 	});
 
-	const response: PreparaFaturaResponse = {
+	const response: PrepareInvoiceResponse = {
 		status: 200,
 		success: true,
 		dateStr: formatToISODate(f_data_referencia),
 		date: f_data_referencia,
-		data: fatura,
+		data: invoice,
 	};
 
 	return reply.status(200).send(response);
 };
 
-export { preparaFaturaHandler };
+export { prepareInvoiceHandler };
