@@ -4,7 +4,7 @@ import type { ClientDetail, ProcessedLine } from "./types";
 
 function createClientDetail(
 	client: Cliente,
-	lines: readonly ProcessedLine[],
+	lines: ProcessedLine[],
 	total: number,
 ): ClientDetail {
 	const groupedLines = LineProcessor.groupLinesByPlan(lines);

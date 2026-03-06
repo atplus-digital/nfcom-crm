@@ -3,17 +3,8 @@ import { formatToISODate } from "@/modules/fatura/domain/date-calculator";
 import { invoiceService } from "@/modules/fatura/fatura.service";
 import type {
 	PreparaFaturaBody,
-	TipoFaturamento,
+	PrepareInvoiceResponse,
 } from "./prepara-fatura.schemas";
-
-interface PrepareInvoiceResponse {
-	readonly status: 200;
-	readonly success: true;
-	readonly dateStr: string;
-	readonly date: Date;
-	readonly tipoFaturamento: TipoFaturamento;
-	readonly data: unknown;
-}
 
 const prepareInvoiceHandler = async (
 	request: FastifyRequest<{ Body: PreparaFaturaBody }>,
@@ -32,7 +23,7 @@ const prepareInvoiceHandler = async (
 		success: true,
 		dateStr: formatToISODate(f_data_referencia),
 		date: f_data_referencia,
-		tipoFaturamento: f_tipo_de_faturamento,
+		billingType: f_tipo_de_faturamento,
 		data: invoice,
 	};
 

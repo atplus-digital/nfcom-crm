@@ -1,20 +1,11 @@
 import z from "zod";
 
-/**
- * Tipos de faturamento disponíveis
- * - parceiro: Faturamento direto ao parceiro
- * - via-parceiro: Faturamento através do parceiro
- * - cofaturamento: Faturamento compartilhado
- * - cliente-final: Faturamento direto ao cliente final
- */
 const TipoFaturamentoEnum = z.enum([
 	"parceiro",
 	"via-parceiro",
 	"cofaturamento",
 	"cliente-final",
 ]);
-
-type TipoFaturamento = z.infer<typeof TipoFaturamentoEnum>;
 
 const preparaFaturaSchema = z.object({
 	f_parceiro: z
@@ -23,8 +14,6 @@ const preparaFaturaSchema = z.object({
 	f_data_referencia: z.coerce.date({ message: "Data de referência inválida" }),
 	f_tipo_de_faturamento: TipoFaturamentoEnum,
 });
-
-type PreparaFaturaBody = z.infer<typeof preparaFaturaSchema>;
 
 const ProcessedLineSchema = z.object({
 	id: z.union([z.string(), z.number()]),
@@ -47,7 +36,7 @@ const GroupedServiceSchema = z.object({
 });
 
 const ClientDetailSchema = z.object({
-	client: z.record(z.string(), z.unknown()),
+	client: z.unknown(),
 	total: z.number(),
 	totalLines: z.number(),
 	lines: z.array(ProcessedLineSchema),
@@ -55,7 +44,7 @@ const ClientDetailSchema = z.object({
 });
 
 const PartnerInvoiceSchema = z.object({
-	partner: z.record(z.string(), z.unknown()),
+	partner: z.unknown(),
 	invoiceTotal: z.number(),
 	totalClients: z.number(),
 	totalLines: z.number(),
@@ -75,14 +64,31 @@ const preparaFaturaResponseSchema = z.object({
 	success: z.literal(true),
 	dateStr: z.string(),
 	date: z.date(),
-	tipoFaturamento: TipoFaturamentoEnum,
+	billingType: TipoFaturamentoEnum,
 	data: InvoicePartnerSchema,
 });
+
+export type PrepareInvoiceResponse = z.infer<
+	typeof preparaFaturaResponseSchema
+>;
 
 export {
 	preparaFaturaSchema,
 	preparaFaturaResponseSchema,
 	TipoFaturamentoEnum,
-	type PreparaFaturaBody,
-	type TipoFaturamento,
+	ProcessedLineSchema,
+	GroupedLineSchema,
+	GroupedServiceSchema,
+	ClientDetailSchema,
+	PartnerInvoiceSchema,
+	InvoicePartnerSchema,
 };
+
+export type PreparaFaturaBody = z.infer<typeof preparaFaturaSchema>;
+export type TipoFaturamento = z.infer<typeof TipoFaturamentoEnum>;
+export type ProcessedLine = z.infer<typeof ProcessedLineSchema>;
+export type GroupedLine = z.infer<typeof GroupedLineSchema>;
+export type GroupedService = z.infer<typeof GroupedServiceSchema>;
+export type ClientDetail = z.infer<typeof ClientDetailSchema>;
+export type PartnerInvoice = z.infer<typeof PartnerInvoiceSchema>;
+export type InvoicePartner = z.infer<typeof InvoicePartnerSchema>;

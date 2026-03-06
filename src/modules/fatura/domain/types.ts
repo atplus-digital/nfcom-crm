@@ -1,60 +1,33 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
+import type {
+	ClientDetail as ClientDetailBase,
+	GroupedLine,
+	GroupedService,
+	InvoicePartner as InvoicePartnerBase,
+	PartnerInvoice as PartnerInvoiceBase,
+	ProcessedLine,
+	TipoFaturamento,
+} from "@/routes/prepara-fatura/prepara-fatura.schemas";
 
-interface ProcessedLine {
-	readonly id: string | number;
-	readonly planId: string | number;
-	readonly unitPrice: number;
-	readonly description: string;
-}
-
-interface GroupedLine extends ProcessedLine {
-	readonly quantity: number;
-	readonly total: number;
-}
-
-interface GroupedService {
-	readonly planId: string | number;
-	readonly description: string;
-	readonly unitPrice: number;
-	readonly quantity: number;
-	readonly total: number;
-}
-
-interface ClientDetail {
+interface ClientDetail extends Omit<ClientDetailBase, "client"> {
 	readonly client: Cliente;
-	readonly total: number;
-	readonly totalLines: number;
-	readonly lines: readonly ProcessedLine[];
-	readonly groupedLines: readonly GroupedLine[];
 }
 
-interface PartnerInvoice {
+interface PartnerInvoice extends Omit<PartnerInvoiceBase, "partner"> {
 	readonly partner: Parceiro;
-	readonly invoiceTotal: number;
-	readonly totalClients: number;
-	readonly totalLines: number;
 }
 
-interface InvoicePartner {
-	readonly dueDate: string;
-	readonly invoiceTotal: number;
-	readonly totalLines: number;
+interface InvoicePartner
+	extends Omit<InvoicePartnerBase, "partner" | "clients"> {
 	readonly partner: PartnerInvoice;
-	readonly clients: readonly ClientDetail[];
-	readonly groupedServices: readonly GroupedService[];
+	readonly clients: ClientDetail[];
 }
-
-type BillingType =
-	| "parceiro"
-	| "via-parceiro"
-	| "cofaturamento"
-	| "cliente-final";
 
 interface CalculateInvoiceParams {
 	readonly partnerId: string | number;
 	readonly referenceDate: string;
-	readonly billingType?: BillingType;
+	readonly billingType?: TipoFaturamento;
 }
 
 export type {
@@ -65,5 +38,5 @@ export type {
 	PartnerInvoice,
 	InvoicePartner,
 	CalculateInvoiceParams,
-	BillingType as TipoFaturamento,
+	TipoFaturamento,
 };

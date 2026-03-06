@@ -14,7 +14,8 @@
     "format": "biome format --write",
     "lint": "biome lint",
     "check": "biome check",
-    "types:gen": "tsx scripts/types-gen/types-gen.mts"
+    "types:gen": "tsx scripts/types-gen/index.mts",
+    "commit": "pnpm format && pnpm lint --fix && pnpm check --fix && git add . && git commit -m"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",
