@@ -14,9 +14,6 @@ importers:
       axios:
         specifier: ^1.13.6
         version: 1.13.6
-      coverage-badges-cli:
-        specifier: ^2.2.0
-        version: 2.2.0
       cpf-cnpj-validator:
         specifier: ^1.0.3
         version: 1.0.3
@@ -51,6 +48,9 @@ importers:
       '@types/node':
         specifier: ^25.3.3
         version: 25.3.3
+      coverage-badges-cli:
+        specifier: ^2.2.0
+        version: 2.2.0
       dotenv:
         specifier: ^16.0.0
         version: 16.6.1
