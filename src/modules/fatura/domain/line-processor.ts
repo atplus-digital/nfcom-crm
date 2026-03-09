@@ -5,7 +5,7 @@ import type {
 	GroupedLine,
 	GroupedService,
 	ProcessedLine,
-} from "../fatura.schemas";
+} from "../invoice.schemas";
 import { LINES, PLANS } from "./constants";
 
 interface PlanInfo {

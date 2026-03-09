@@ -6,7 +6,7 @@ import {
 	parseISO,
 	setDate,
 } from "date-fns";
-import { DATES } from "../fatura.constants";
+import { DATES } from "../invoice.constants";
 
 function formatToISODate(date: Date): string {
 	return format(date, "yyyy-MM-dd");
@@ -26,4 +26,4 @@ function calculateDueDate(referenceDate: string, dueDay: number): string {
 	return formatToISODate(dueDate);
 }
 
-export { formatToISODate, calculateDueDate };
+export { calculateDueDate, formatToISODate };

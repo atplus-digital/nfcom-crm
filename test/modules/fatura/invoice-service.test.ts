@@ -9,7 +9,7 @@ const mockFindParceiroById = jest.fn();
 const mockFindClientesAtivos = jest.fn();
 const mockFindAllPlanos = jest.fn();
 
-jest.mock("@/modules/atacado/atacado.repository", () => ({
+jest.mock("@/modules/atacado/wholesale.repository", () => ({
 	atacadoRepository: {
 		findParceiroById: mockFindParceiroById,
 		findClientesAtivosByParceiroId: mockFindClientesAtivos,
@@ -17,7 +17,7 @@ jest.mock("@/modules/atacado/atacado.repository", () => ({
 	},
 }));
 
-import { AtacadoInvoiceDataService } from "@/modules/fatura/fatura.service";
+import { AtacadoInvoiceDataService } from "@/modules/fatura/invoice.service";
 
 describe("AtacadoInvoiceDataService", () => {
 	beforeEach(() => {

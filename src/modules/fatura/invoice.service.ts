@@ -1,5 +1,5 @@
-import { atacadoRepository } from "@/modules/atacado/atacado.repository";
-import type { InvoiceDataService } from "./fatura.service.types";
+import { atacadoRepository } from "@/modules/atacado/wholesale.repository";
+import type { InvoiceDataService } from "./invoice.service.types";
 import { InvoiceCalculator } from "./invoice-calculator";
 
 class AtacadoInvoiceDataService implements InvoiceDataService {
@@ -19,4 +19,4 @@ class AtacadoInvoiceDataService implements InvoiceDataService {
 
 const invoiceService = new InvoiceCalculator(new AtacadoInvoiceDataService());
 
-export { invoiceService, InvoiceCalculator, AtacadoInvoiceDataService };
+export { AtacadoInvoiceDataService, InvoiceCalculator, invoiceService };

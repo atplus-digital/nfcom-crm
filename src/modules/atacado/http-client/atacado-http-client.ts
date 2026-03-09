@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { env } from "@/env";
 import { ExternalApiError } from "@/shared/base.error";
-import { API_HEADERS, HEADERS } from "../atacado.constants";
+import { API_HEADERS, HEADERS } from "../wholesale.constants";
 import { ATACADO_ROUTES, type AtacadoRouteWithSuffix } from "./atacado.routes";
 import type { ApiResponse, HttpClientConfig } from "./types";
 import {
@@ -76,4 +76,4 @@ const createAtacadoHttpClient = (): AtacadoHttpClient =>
 
 const atacadoHttpClient = createAtacadoHttpClient();
 
-export { atacadoHttpClient, ATACADO_ROUTES };
+export { ATACADO_ROUTES, atacadoHttpClient };

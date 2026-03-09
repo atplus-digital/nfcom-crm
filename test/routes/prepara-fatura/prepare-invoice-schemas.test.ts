@@ -1,4 +1,4 @@
-import { preparaFaturaSchema } from "@/routes/prepara-fatura/prepara-fatura.schemas";
+import { preparaFaturaSchema } from "@/routes/prepara-fatura/prepare-invoice.schemas";
 
 describe("prepara-fatura.schemas", () => {
 	describe("preparaFaturaSchema", () => {

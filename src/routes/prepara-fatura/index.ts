@@ -1,9 +1,9 @@
 import type { FastifyPluginAsync } from "fastify";
-import { prepareInvoiceHandler } from "./prepara-fatura.controller";
+import { prepareInvoiceHandler } from "./prepare-invoice.controller";
 import {
 	preparaFaturaResponseSchema,
 	preparaFaturaSchema,
-} from "./prepara-fatura.schemas";
+} from "./prepare-invoice.schemas";
 
 const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
 	server.post("/prepara-fatura", {

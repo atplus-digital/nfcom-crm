@@ -1,4 +1,4 @@
-import { BILLING_TYPE_CONFIG, DATES } from "@/modules/fatura/fatura.constants";
+import { BILLING_TYPE_CONFIG, DATES } from "@/modules/fatura/invoice.constants";
 
 describe("fatura.constants", () => {
 	describe("DATES", () => {

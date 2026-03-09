@@ -20,7 +20,7 @@ jest.mock("@/modules/atacado/http-client/atacado-http-client", () => ({
 	},
 }));
 
-import { atacadoRepository } from "@/modules/atacado/atacado.repository";
+import { atacadoRepository } from "@/modules/atacado/wholesale.repository";
 import { NotFoundError } from "@/shared/base.error";
 
 describe("AtacadoApiRepository", () => {

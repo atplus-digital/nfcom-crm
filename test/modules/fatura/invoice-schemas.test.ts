@@ -1,9 +1,9 @@
 import {
-	GroupedLineSchema,
-	GroupedServiceSchema,
-	ProcessedLineSchema,
-	TipoFaturamentoEnum,
-} from "@/modules/fatura/fatura.schemas";
+    GroupedLineSchema,
+    GroupedServiceSchema,
+    ProcessedLineSchema,
+    TipoFaturamentoEnum,
+} from "@/modules/fatura/invoice.schemas";
 
 describe("fatura.schemas", () => {
 	describe("TipoFaturamentoEnum", () => {

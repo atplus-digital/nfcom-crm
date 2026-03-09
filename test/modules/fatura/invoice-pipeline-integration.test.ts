@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import type { InvoiceDataService } from "@/modules/fatura/fatura.service.types";
 import { InvoiceCalculator } from "@/modules/fatura/invoice-calculator";
+import type { InvoiceDataService } from "@/modules/fatura/invoice.service.types";
 import {
 	BusinessRuleError,
 	DocumentValidationError,

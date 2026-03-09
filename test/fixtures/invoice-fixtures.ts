@@ -2,7 +2,7 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { Servico } from "@/@types/atacado/Servico";
-import type { InvoiceDataService } from "@/modules/fatura/fatura.service.types";
+import type { InvoiceDataService } from "@/modules/fatura/invoice.service.types";
 
 export const VALID_CNPJ = "11222333000181";
 export const VALID_CPF = "52998224725";

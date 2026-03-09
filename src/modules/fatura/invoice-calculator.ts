@@ -4,17 +4,17 @@ import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { documentValidator } from "@/modules/fatura/validators/document.validator";
 import { entityValidator } from "@/modules/fatura/validators/entity.validator";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
-import { createClientDetail } from "./domain/cliente-builder";
+import { createClientDetail } from "./domain/client-builder";
 import { calculateDueDate } from "./domain/date-calculator";
-import { LineProcessor } from "./domain/linha-processor";
-import { createPartnerInvoice } from "./domain/parceiro-builder";
-import { DATES } from "./fatura.constants";
+import { LineProcessor } from "./domain/line-processor";
+import { createPartnerInvoice } from "./domain/partner-builder";
+import { DATES } from "./invoice.constants";
 import type {
 	CalculateInvoiceParams,
 	ClientDetail,
 	InvoicePartner,
-} from "./fatura.schemas";
-import type { InvoiceDataService } from "./fatura.service.types";
+} from "./invoice.schemas";
+import type { InvoiceDataService } from "./invoice.service.types";
 
 export class InvoiceCalculator {
 	private readonly dataService: InvoiceDataService;
@@ -23,9 +23,10 @@ export class InvoiceCalculator {
 		this.dataService = dataService;
 	}
 
-	async calculate(params: CalculateInvoiceParams): Promise<InvoicePartner> {
-		const { partnerId, referenceDate } = params;
-
+	async calculate({
+		partnerId,
+		referenceDate,
+	}: CalculateInvoiceParams): Promise<InvoicePartner> {
 		const { partner, clients, plans } =
 			await this.dataService.fetchInvoiceData(partnerId);
 
@@ -44,6 +45,7 @@ export class InvoiceCalculator {
 		const invoiceTotal = this.calculateTotal(processedClients);
 		const totalLines = this.calculateTotalLines(processedClients);
 		const dueDate = this.calculateInvoiceDueDate(partner, referenceDate);
+
 		const groupedServices = LineProcessor.groupServices(processedClients);
 
 		const partnerInvoice = createPartnerInvoice(

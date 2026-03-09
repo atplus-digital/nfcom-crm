@@ -1,6 +1,6 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
-import { createClientDetail } from "@/modules/fatura/domain/cliente-builder";
-import type { ProcessedLine } from "@/modules/fatura/fatura.schemas";
+import { createClientDetail } from "@/modules/fatura/domain/client-builder";
+import type { ProcessedLine } from "@/modules/fatura/invoice.schemas";
 
 const mockCliente: Cliente = {
 	id: 1,

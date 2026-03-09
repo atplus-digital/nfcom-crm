@@ -1,7 +1,7 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { Servico } from "@/@types/atacado/Servico";
-import { LineProcessor } from "@/modules/fatura/domain/linha-processor";
+import { LineProcessor } from "@/modules/fatura/domain/line-processor";
 import { BusinessRuleError } from "@/shared/base.error";
 
 const createPlano = (overrides?: Partial<PlanoDeServico>): PlanoDeServico => ({

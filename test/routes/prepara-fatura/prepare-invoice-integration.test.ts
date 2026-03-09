@@ -7,7 +7,7 @@ import {
 	validatorCompiler,
 } from "fastify-type-provider-zod";
 
-jest.mock("@/modules/fatura/fatura.service", () => {
+jest.mock("@/modules/fatura/invoice.service", () => {
 	const mockCalculate = jest.fn();
 	return {
 		invoiceService: { calculate: mockCalculate },
@@ -16,7 +16,7 @@ jest.mock("@/modules/fatura/fatura.service", () => {
 });
 
 const getMockCalculate = () => {
-	const mod = jest.requireMock("@/modules/fatura/fatura.service");
+	const mod = jest.requireMock("@/modules/fatura/invoice.service");
 	return mod.__mockCalculate as jest.Mock;
 };
 

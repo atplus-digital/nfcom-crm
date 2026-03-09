@@ -1,5 +1,5 @@
-import type { TipoFaturamento } from "./fatura.schemas";
-import type { BillingTypeConfig } from "./fatura.service.types";
+import type { TipoFaturamento } from "./invoice.schemas";
+import type { BillingTypeConfig } from "./invoice.service.types";
 
 export const DATES = {
 	MIN_DAYS_TO_DUE_DATE: 6,
