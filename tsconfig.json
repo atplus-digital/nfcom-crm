@@ -1,6 +1,7 @@
 {
   "include": [
     "src/**/*.ts",
+    "test/**/*.ts"
   ],
   "exclude": [
     "dist",
@@ -12,7 +13,11 @@
     ],
     "module": "nodenext",
     "target": "ES2024",
-    "rootDir": "./src",
+    // "rootDir": "./src",
+    "rootDirs": [
+      "./src",
+      "./test"
+    ],
     "outDir": "./dist",
     "types": [
       "node",

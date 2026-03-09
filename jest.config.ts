@@ -16,14 +16,13 @@ const config: Config = {
 	],
 	coverageDirectory: "coverage",
 	coverageProvider: "v8",
-	roots: ["<rootDir>/src/test"],
+	roots: ["<rootDir>/test"],
 	moduleNameMapper: {
 		"^@/(.*)$": "<rootDir>/src/$1",
 		"^@types/(.*)$": "<rootDir>/src/@types/$1",
 	},
 	transform: {
-		"^.+\\.tsx?$":"ts-jest",
-
+		"^.+\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
 	},
   coverageReporters: [
     // "json",
