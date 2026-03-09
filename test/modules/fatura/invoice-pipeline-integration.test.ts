@@ -4,14 +4,14 @@ import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { InvoiceDataService } from "@/modules/fatura/fatura.service.types";
 import { InvoiceCalculator } from "@/modules/fatura/invoice-calculator";
 import {
-    BusinessRuleError,
-    DocumentValidationError,
-    EntityValidationError,
+	BusinessRuleError,
+	DocumentValidationError,
+	EntityValidationError,
 } from "@/shared/base.error";
 import {
-    createCliente,
-    createParceiro,
-    createServico,
+	createCliente,
+	createParceiro,
+	createServico,
 } from "../../fixtures/invoice-fixtures";
 
 const planos: PlanoDeServico[] = [

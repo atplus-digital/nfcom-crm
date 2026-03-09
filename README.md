@@ -4,7 +4,7 @@
 
 ### Testes Revisados
 
-- [ ] **modules**
+- [x] **modules**
 
   - [x] **atacado**
     - [x] atacado-constants.test.ts
@@ -14,29 +14,29 @@
       - [x] atacado-routes.test.ts
       - [x] utils.test.ts
 
-  - [ ] **fatura**
-    - [ ] fatura-constants.test.ts
-    - [ ] fatura-schemas.test.ts
-    - [ ] fatura-service.test.ts
-    - [ ] invoice-calculator-edge-cases.test.ts
-    - [ ] invoice-calculator.test.ts
-    - [ ] invoice-pipeline-integration.test.ts
-    - [ ] **domain**
-      - [ ] cliente-builder.test.ts
-      - [ ] constants.test.ts
-      - [ ] date-calculator-edge-cases.test.ts
-      - [ ] date-calculator.test.ts
-      - [ ] linha-processor.test.ts
-      - [ ] parceiro-builder.test.ts
-    - [ ] **validators**
-      - [ ] document-validator.test.ts
-      - [ ] entity-validator.test.ts
-      - [ ] validation-utils.test.ts
+  - [x] **fatura**
+    - [x] fatura-constants.test.ts
+    - [x] fatura-schemas.test.ts
+    - [x] fatura-service.test.ts
+    - [x] invoice-calculator-edge-cases.test.ts
+    - [x] invoice-calculator.test.ts
+    - [x] invoice-pipeline-integration.test.ts
+    - [x] **domain**
+      - [x] cliente-builder.test.ts
+      - [x] constants.test.ts
+      - [x] date-calculator-edge-cases.test.ts
+      - [x] date-calculator.test.ts
+      - [x] linha-processor.test.ts
+      - [x] parceiro-builder.test.ts
+    - [x] **validators**
+      - [x] document-validator.test.ts
+      - [x] entity-validator.test.ts
+      - [x] validation-utils.test.ts
 
-- [ ] **routes**
+- [x] **routes**
 
-  - [ ] **prepara-fatura**
-    - [ ] prepara-fatura-integration.test.ts
+  - [x] **prepara-fatura**
+    - [x] prepara-fatura-integration.test.ts
     - [x] prepara-fatura-schemas.test.ts
 
 - [x] **shared**

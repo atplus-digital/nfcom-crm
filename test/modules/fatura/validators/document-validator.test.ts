@@ -67,9 +67,11 @@ describe("documentValidator", () => {
 				f_razao_social: undefined,
 				f_cnpj: INVALID_CNPJ,
 			} as unknown as Parceiro);
+
 			const result = documentValidator.validatePartner(parceiro);
 
 			expect(result.success).toBe(false);
+
 			if (!result.success) {
 				expect(result.error.entity).toBe("Parceiro");
 			}
