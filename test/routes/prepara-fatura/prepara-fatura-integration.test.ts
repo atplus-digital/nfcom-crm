@@ -1,11 +1,11 @@
+import { preparaFaturaRoutes } from "@/routes/prepara-fatura";
+import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
+import { errorHandler } from "@/shared/error-handler";
 import fastify, { type FastifyInstance } from "fastify";
 import {
 	serializerCompiler,
 	validatorCompiler,
 } from "fastify-type-provider-zod";
-import { preparaFaturaRoutes } from "@/routes/prepara-fatura";
-import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
-import { errorHandler } from "@/shared/error-handler";
 
 jest.mock("@/modules/fatura/fatura.service", () => {
 	const mockCalculate = jest.fn();

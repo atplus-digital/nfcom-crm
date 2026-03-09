@@ -84,6 +84,19 @@ describe("documentValidator", () => {
 
 			expect(result.success).toBe(false);
 		});
+
+		it("deve usar nome fallback quando f_razao_social é undefined", () => {
+			const parceiro = createParceiro({
+				f_razao_social: undefined,
+				f_cnpj: invalidCNPJ,
+			} as unknown as Parceiro);
+			const result = documentValidator.validatePartner(parceiro);
+
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.entity).toBe("Parceiro");
+			}
+		});
 	});
 
 	describe("validateClient", () => {
@@ -118,6 +131,19 @@ describe("documentValidator", () => {
 			expect(result.success).toBe(false);
 			if (!result.success) {
 				expect(result.error.type).toBe("CNPJ");
+			}
+		});
+
+		it("deve usar nome fallback quando f_nome_razao é undefined", () => {
+			const cliente = createCliente({
+				f_nome_razao: undefined,
+				f_cpf_cnpj: invalidCPF,
+			} as unknown as Cliente);
+			const result = documentValidator.validateClient(cliente);
+
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.entity).toBe("Cliente");
 			}
 		});
 	});

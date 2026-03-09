@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import {
 	BusinessRuleError,
 	ExternalApiError,
@@ -6,6 +5,7 @@ import {
 } from "@/shared/base.error";
 import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
 import { errorHandler } from "@/shared/error-handler";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const createMockRequest = (overrides?: Partial<FastifyRequest>) =>
 	({
@@ -172,4 +172,33 @@ describe("errorHandler", () => {
 		const sentData = (reply.send as jest.Mock).mock.calls[0]?.[0];
 		expect(sentData.error.details).toBeUndefined();
 	});
+
+	it("deve retornar 500 quando erro tem statusCode mas não é número", () => {
+		const error = Object.assign(new Error("Error with invalid statusCode"), {
+			statusCode: "400",
+		});
+		const request = createMockRequest();
+		const reply = createMockReply();
+
+		errorHandler(error, request, reply);
+
+		expect(reply.status).toHaveBeenCalledWith(
+			HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		);
+	});
+
+	it("getStatusCode Deve retornar o status code se for um AppError e o status não for number ",() => {
+		const error = Object.assign(new NotFoundError("Error with invalid statusCode"), {
+			statusCode: "400",
+		});
+		const request = createMockRequest();
+		const reply = createMockReply();
+
+		errorHandler(error, request, reply);
+
+		expect(reply.status).toHaveBeenCalledWith(
+			"400",
+		);
+
+	})
 });

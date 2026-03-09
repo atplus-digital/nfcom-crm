@@ -143,6 +143,19 @@ describe("LineProcessor", () => {
 			);
 		});
 
+		it("deve lançar BusinessRuleError quando f_coghzwfvcnx é undefined", () => {
+			const processor = LineProcessor.create(defaultPlanos);
+			const cliente = createCliente({
+				f_linhas_fixas: [
+					createServico({ f_coghzwfvcnx: undefined } as unknown as Servico),
+				],
+			});
+
+			expect(() => processor.processClientLines(cliente)).toThrow(
+				BusinessRuleError,
+			);
+		});
+
 		it("deve retornar dados corretos da linha processada", () => {
 			const processor = LineProcessor.create(defaultPlanos);
 			const cliente = createCliente({

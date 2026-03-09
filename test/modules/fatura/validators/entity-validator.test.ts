@@ -168,5 +168,26 @@ describe("entityValidator", () => {
 				entityValidator.validateAll(createValidParceiro(), clientes),
 			).toThrow(EntityValidationError);
 		});
+
+		it("deve usar ID fallback quando parceiro.id é undefined", () => {
+			const parceiro = createValidParceiro({
+				id: undefined,
+				f_razao_social: "",
+			} as unknown as Parceiro);
+
+			expect(() =>
+				entityValidator.validateAll(parceiro, [createValidCliente()]),
+			).toThrow(EntityValidationError);
+		});
+
+		it("deve usar ID fallback quando cliente.id é undefined", () => {
+			const clientes = [
+				createValidCliente({ id: undefined, f_nome_razao: "" } as unknown as Cliente),
+			];
+
+			expect(() =>
+				entityValidator.validateAll(createValidParceiro(), clientes),
+			).toThrow(EntityValidationError);
+		});
 	});
 });

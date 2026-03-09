@@ -121,5 +121,12 @@ describe("logger.config", () => {
 			);
 			expect(prettyTransport?.level).toBe("trace");
 		});
+
+		it("deve usar development como fallback para ambiente desconhecido", () => {
+			process.env.NODE_ENV = "staging";
+			const config = createLoggerConfig();
+
+			expect(config.level).toBe("debug");
+		});
 	});
 });

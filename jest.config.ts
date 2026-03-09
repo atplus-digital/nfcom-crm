@@ -22,7 +22,7 @@ const config: Config = {
 		"^@types/(.*)$": "<rootDir>/src/@types/$1",
 	},
 	transform: {
-		"^.+\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
+		"^.+\.tsx?$": "ts-jest",
 	},
   coverageReporters: [
     // "json",

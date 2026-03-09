@@ -5,7 +5,9 @@
   ],
   "exclude": [
     "dist",
-    "scripts"
+    "scripts",
+    "node_modules",
+    "coverage"
   ],
   "compilerOptions": {
     "lib": [
