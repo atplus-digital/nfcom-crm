@@ -11,6 +11,5 @@ export interface InvoiceDataService {
 }
 
 export type BillingTypeConfig = {
-	requiresPartnerValidation: boolean;
 	allowsDirectClientBilling: boolean;
 };

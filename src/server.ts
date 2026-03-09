@@ -15,6 +15,7 @@ const buildServer = async () => {
 
 	server.setValidatorCompiler(validatorCompiler);
 	server.setSerializerCompiler(serializerCompiler);
+
 	server.setErrorHandler(errorHandler);
 
 	await server.register(appRoutes);

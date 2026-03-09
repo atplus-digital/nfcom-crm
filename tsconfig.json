@@ -8,22 +8,20 @@
   ],
   "compilerOptions": {
     "lib": [
-      "ES2024"
+      "ES2024",
     ],
     "module": "nodenext",
     "target": "ES2024",
     "rootDir": "./src",
     "outDir": "./dist",
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@types/*": [
-        "./src/@types/*"
       ]
     },
     "sourceMap": true,

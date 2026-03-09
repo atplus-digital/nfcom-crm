@@ -8,19 +8,15 @@ export const DATES = {
 
 export const BILLING_TYPE_CONFIG: Record<TipoFaturamento, BillingTypeConfig> = {
 	parceiro: {
-		requiresPartnerValidation: true,
 		allowsDirectClientBilling: false,
 	},
 	"via-parceiro": {
-		requiresPartnerValidation: true,
 		allowsDirectClientBilling: false,
 	},
 	cofaturamento: {
-		requiresPartnerValidation: true,
 		allowsDirectClientBilling: true,
 	},
 	"cliente-final": {
-		requiresPartnerValidation: false,
 		allowsDirectClientBilling: true,
 	},
 };

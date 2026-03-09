@@ -1,0 +1,59 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.2
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm biome format
+
+      - name: Lint
+        run: pnpm biome lint
+
+      - name: Check code
+        run: pnpm biome check
+
+      - name: Run tests
+        run: pnpm test --coverage
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload coverage
+        if: matrix.node-version == '22.x'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false

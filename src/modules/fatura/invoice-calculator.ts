@@ -8,16 +8,13 @@ import { createClientDetail } from "./domain/cliente-builder";
 import { calculateDueDate } from "./domain/date-calculator";
 import { LineProcessor } from "./domain/linha-processor";
 import { createPartnerInvoice } from "./domain/parceiro-builder";
-import { BILLING_TYPE_CONFIG, DATES } from "./fatura.constants";
+import { DATES } from "./fatura.constants";
 import type {
 	CalculateInvoiceParams,
 	ClientDetail,
 	InvoicePartner,
 } from "./fatura.schemas";
-import type {
-	BillingTypeConfig,
-	InvoiceDataService,
-} from "./fatura.service.types";
+import type { InvoiceDataService } from "./fatura.service.types";
 
 export class InvoiceCalculator {
 	private readonly dataService: InvoiceDataService;
@@ -27,13 +24,12 @@ export class InvoiceCalculator {
 	}
 
 	async calculate(params: CalculateInvoiceParams): Promise<InvoicePartner> {
-		const { partnerId, referenceDate, billingType = "parceiro" } = params;
+		const { partnerId, referenceDate } = params;
 
 		const { partner, clients, plans } =
 			await this.dataService.fetchInvoiceData(partnerId);
 
-		const config = BILLING_TYPE_CONFIG[billingType];
-		this.validateData(partner, clients, plans, config);
+		this.validateData(partner, clients, plans);
 
 		const lineProcessor = LineProcessor.create(plans);
 		const processedClients = this.processClients(clients, lineProcessor);
@@ -71,9 +67,8 @@ export class InvoiceCalculator {
 		partner: Parceiro,
 		clients: readonly Cliente[],
 		plans: readonly PlanoDeServico[],
-		config: BillingTypeConfig,
 	): void {
-		if (config.requiresPartnerValidation && clients.length === 0) {
+		if (clients.length === 0) {
 			throw NotFoundError.create("Clientes ativos", partner.id ?? 0);
 		}
 
