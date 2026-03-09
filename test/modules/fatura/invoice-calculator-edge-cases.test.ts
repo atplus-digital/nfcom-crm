@@ -1,7 +1,6 @@
-import type { Cliente } from "@/@types/atacado/Cliente";
+import { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import type { Servico } from "@/@types/atacado/Servico";
 import type { InvoiceDataService } from "@/modules/fatura/fatura.service.types";
 import { InvoiceCalculator } from "@/modules/fatura/invoice-calculator";
 import {
@@ -10,65 +9,15 @@ import {
 	EntityValidationError,
 	ExternalApiError,
 } from "@/shared/base.error";
-
-const validCNPJ = "11222333000181";
-const validCPF = "52998224725";
-const invalidCNPJ = "00000000000000";
-const invalidCPF = "00000000000";
-
-const createParceiro = (overrides?: Partial<Parceiro>): Parceiro => ({
-	id: 1,
-	f_razao_social: "Empresa Teste",
-	f_cnpj: validCNPJ,
-	f_endereco: "Rua Teste",
-	f_numero: "100",
-	f_bairro: "Centro",
-	f_cidade: "São Paulo",
-	f_uf: "SP",
-	f_cep: "01000000",
-	f_data_vencimento: 10,
-	...overrides,
-});
-
-const createServico = (overrides?: Partial<Servico>): Servico => ({
-	id: 100,
-	f_status: "1",
-	f_coghzwfvcnx: 4,
-	...overrides,
-});
-
-const createCliente = (overrides?: Partial<Cliente>): Cliente => ({
-	id: 10,
-	f_nome_razao: "Cliente Teste",
-	f_cpf_cnpj: validCPF,
-	f_endereco: "Rua Cliente",
-	f_numero: "200",
-	f_bairro: "Bairro",
-	f_cidade: "São Paulo",
-	f_uf: "SP",
-	f_cep: "02000000",
-	f_linhas_fixas: [createServico()],
-	...overrides,
-});
-
-const defaultPlanos: PlanoDeServico[] = [
-	{ id: 4, f_nome: "1 Linha - 1 Canal", f_assinatura_mensal: "3" },
-	{ id: 5, f_nome: "1 Linha - 2 Canais", f_assinatura_mensal: "5" },
-];
-
-const createMockDataService = (
-	overrides?: Partial<{
-		partner: Parceiro;
-		clients: Cliente[];
-		plans: PlanoDeServico[];
-	}>,
-): InvoiceDataService => ({
-	fetchInvoiceData: jest.fn().mockResolvedValue({
-		partner: overrides?.partner ?? createParceiro(),
-		clients: overrides?.clients ?? [createCliente()],
-		plans: overrides?.plans ?? defaultPlanos,
-	}),
-});
+import {
+	INVALID_CNPJ,
+	INVALID_CPF,
+	VALID_CPF,
+	createCliente,
+	createMockDataService,
+	createParceiro,
+	createServico,
+} from "../../fixtures/invoice-fixtures";
 
 describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 	beforeEach(() => {
@@ -134,7 +83,7 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 	describe("validação de documento integrada", () => {
 		it("deve lançar DocumentValidationError quando parceiro tem CNPJ inválido", async () => {
 			const parceiro = createParceiro();
-			parceiro.f_cnpj = invalidCNPJ;
+			parceiro.f_cnpj = INVALID_CNPJ;
 
 			const dataService = createMockDataService({ partner: parceiro });
 			const calculator = new InvoiceCalculator(dataService);
@@ -146,7 +95,7 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 
 		it("deve lançar DocumentValidationError quando cliente tem CPF inválido", async () => {
 			const cliente = createCliente();
-			cliente.f_cpf_cnpj = invalidCPF;
+			cliente.f_cpf_cnpj = INVALID_CPF;
 
 			const dataService = createMockDataService({ clients: [cliente] });
 			const calculator = new InvoiceCalculator(dataService);
@@ -293,7 +242,7 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const clientes = Array.from({ length: 50 }, (_, i) =>
 				createCliente({
 					id: i + 1,
-					f_cpf_cnpj: validCPF,
+					f_cpf_cnpj: VALID_CPF,
 					f_linhas_fixas: [createServico({ id: i * 10, f_coghzwfvcnx: 4 })],
 				}),
 			);

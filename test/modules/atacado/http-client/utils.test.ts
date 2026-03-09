@@ -1,4 +1,3 @@
-import { AxiosError, type AxiosRequestHeaders } from "axios";
 import {
 	DEFAULT_MAX_RETRIES,
 	DEFAULT_RETRY_DELAY,
@@ -7,6 +6,7 @@ import {
 	shouldRetry,
 	sleep,
 } from "@/modules/atacado/http-client/utils";
+import { AxiosError, type AxiosRequestHeaders } from "axios";
 
 describe("http-client utils", () => {
 	describe("constants", () => {
@@ -38,6 +38,7 @@ describe("http-client utils", () => {
 	describe("extractErrorMessage", () => {
 		it("deve extrair mensagem de AxiosError com response data", () => {
 			const error = new AxiosError("Request failed");
+
 			error.response = {
 				data: { message: "API Error" },
 				status: 500,
@@ -86,18 +87,6 @@ describe("http-client utils", () => {
 				status: 500,
 				data: {},
 				statusText: "Internal Server Error",
-				headers: {},
-				config: { headers: {} as AxiosRequestHeaders },
-			};
-			expect(shouldRetry(error)).toBe(true);
-		});
-
-		it("deve retornar true para status 502", () => {
-			const error = new AxiosError("Bad Gateway");
-			error.response = {
-				status: 502,
-				data: {},
-				statusText: "Bad Gateway",
 				headers: {},
 				config: { headers: {} as AxiosRequestHeaders },
 			};

@@ -1,4 +1,4 @@
-import type { CollectionInput } from "./types.ts";
+import { CollectionInput } from "./types.mts";
 
 export const COLLECTIONS: CollectionInput[] = [
 	{

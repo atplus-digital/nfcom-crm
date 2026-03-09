@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import {
 	BusinessRuleError,
 	DocumentValidationError,
@@ -8,25 +7,10 @@ import {
 } from "@/shared/base.error";
 import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
 import { errorHandler } from "@/shared/error-handler";
-
-const createMockRequest = (overrides?: Partial<FastifyRequest>) =>
-	({
-		method: "POST",
-		url: "/test",
-		body: {},
-		log: {
-			error: jest.fn(),
-		},
-		...overrides,
-	}) as unknown as FastifyRequest;
-
-const createMockReply = () => {
-	const reply = {
-		status: jest.fn().mockReturnThis(),
-		send: jest.fn().mockReturnThis(),
-	} as unknown as FastifyReply;
-	return reply;
-};
+import {
+	createMockReply,
+	createMockRequest,
+} from "../fixtures/error-handler-fixtures";
 
 describe("errorHandler - cenários adicionais", () => {
 	const originalEnv = process.env.NODE_ENV;

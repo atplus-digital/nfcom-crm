@@ -60,6 +60,15 @@ describe("AtacadoApiRepository", () => {
 
 			expect(result).toEqual(parceiro);
 		});
+
+		it("deve aceitar id como número", async () => {
+			const parceiro = { id: 123, f_razao_social: "Teste" };
+			mockGet.mockResolvedValue({ data: parceiro });
+
+			const result = await atacadoRepository.findParceiroById(123);
+
+			expect(result).toEqual(parceiro);
+		});
 	});
 
 	describe("findClientesAtivosByParceiroId", () => {
@@ -149,10 +158,15 @@ describe("AtacadoApiRepository", () => {
 			const fatura = { id: 1, f_parceiro: 1 };
 			mockPost.mockResolvedValue({ data: fatura });
 
-			const input = { f_parceiro: 1, f_total: 100 };
-			const result = await atacadoRepository.createFatura(
-				input as Parameters<typeof atacadoRepository.createFatura>[0],
-			);
+			const input = {
+				f_data_referencia: "2026-03-01",
+				f_valor_total: "100.00",
+				f_status: "pendente",
+				f_fk_parceiro: 1,
+				f_tipo_de_faturamento: "mensal",
+				f_data_vencimento: "2026-03-10",
+			};
+			const result = await atacadoRepository.createFatura(input);
 
 			expect(result).toEqual(fatura);
 			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_faturas:create", input);
@@ -164,10 +178,17 @@ describe("AtacadoApiRepository", () => {
 			const cobranca = { id: 1 };
 			mockPost.mockResolvedValue({ data: cobranca });
 
-			const input = { f_fatura: 1 };
-			const result = await atacadoRepository.createCobranca(
-				input as Parameters<typeof atacadoRepository.createCobranca>[0],
-			);
+			const input = {
+				f_data_vencimento: "2026-03-10",
+				f_valor_total: "100.00",
+				f_status: "pendente",
+				f_nome_devedor: "Cliente Teste",
+				f_email_devedor: "cliente@teste.com",
+				f_documento_devedor: "12345678901",
+				f_id_externo: "EXT-001",
+				f_descricao: "Cobrança de teste",
+			};
+			const result = await atacadoRepository.createCobranca(input);
 
 			expect(result).toEqual(cobranca);
 			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_cobrancas:create", input);
@@ -179,11 +200,20 @@ describe("AtacadoApiRepository", () => {
 			const nfcom = { id: 1 };
 			mockPost.mockResolvedValue({ data: nfcom });
 
-			const input = { f_tipo: "NFCom" };
-			const result = await atacadoRepository.createNFCom(
-				5,
-				input as Parameters<typeof atacadoRepository.createNFCom>[1],
-			);
+			const input = {
+				f_nome: "Cliente NFCom",
+				f_cpfcnpj: "12345678901",
+				f_rgie: "123456789",
+				f_endereco: "Rua Teste",
+				f_endereco_numero: "123",
+				f_bairro: "Centro",
+				f_cidade: "São Paulo",
+				f_uf: "SP",
+				f_cep: "01234567",
+				f_telefone: "11999999999",
+				f_email: "nfcom@teste.com",
+			};
+			const result = await atacadoRepository.createNFCom(5, input);
 
 			expect(result).toEqual(nfcom);
 			expect(mockPost).toHaveBeenCalledWith(
@@ -198,11 +228,16 @@ describe("AtacadoApiRepository", () => {
 			const item = { id: 1 };
 			mockPost.mockResolvedValue({ data: item });
 
-			const input = { f_descricao: "Item 1" };
-			const result = await atacadoRepository.createItemNFCom(
-				10,
-				input as Parameters<typeof atacadoRepository.createItemNFCom>[1],
-			);
+			const input = {
+				f_item: 1,
+				f_descricao: "Item de teste",
+				f_cclass: "0101",
+				f_cfop: "5102",
+				f_quantidade: 1,
+				f_unitario: "100.00",
+				f_total: "100.00",
+			};
+			const result = await atacadoRepository.createItemNFCom(10, input);
 
 			expect(result).toEqual(item);
 			expect(mockPost).toHaveBeenCalledWith(

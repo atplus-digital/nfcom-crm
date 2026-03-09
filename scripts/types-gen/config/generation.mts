@@ -11,7 +11,7 @@ export interface GenerationConfig {
 }
 
 export const defaultConfig: GenerationConfig = {
-	outputDir: "./src/@types/atacado",
+	outputDir: "./generated/@types/atacado",
 	tempDir: ".tmp",
 	apiTimeout: 15000,
 	orvalClient: "axios",

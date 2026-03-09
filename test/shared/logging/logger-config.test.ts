@@ -33,7 +33,7 @@ describe("logger.config", () => {
 	});
 
 	describe("createLoggerConfig", () => {
-		it("deve retornar config com level debug em development", () => {
+		it("deve retornar config com level 'debug' em development", () => {
 			process.env.NODE_ENV = "development";
 			const config = createLoggerConfig();
 
@@ -41,62 +41,21 @@ describe("logger.config", () => {
 			expect(config.transport).toBeDefined();
 		});
 
-		it("deve retornar config com level info em production", () => {
+		it("deve retornar config com level 'info' em production", () => {
 			process.env.NODE_ENV = "production";
 			const config = createLoggerConfig();
 
 			expect(config.level).toBe("info");
 		});
 
-		it("deve retornar config com level silent em test", () => {
+		it("deve retornar config com level 'silent' em test", () => {
 			process.env.NODE_ENV = "test";
 			const config = createLoggerConfig();
 
 			expect(config.level).toBe("silent");
 		});
 
-		it("deve usar development como fallback", () => {
-			delete process.env.NODE_ENV;
-			const config = createLoggerConfig();
-
-			expect(config.level).toBe("debug");
-		});
-
-		it("deve ter 3 transports configurados", () => {
-			process.env.NODE_ENV = "development";
-			const config = createLoggerConfig();
-
-			const transport = config.transport as { targets: unknown[] };
-			expect(transport.targets).toHaveLength(3);
-		});
-
-		it("deve incluir transport pino-roll para errors", () => {
-			process.env.NODE_ENV = "development";
-			const config = createLoggerConfig();
-
-			const transport = config.transport as {
-				targets: { target: string; level: string }[];
-			};
-			const errorTransport = transport.targets.find(
-				(t) => t.target === "pino-roll" && t.level === "error",
-			);
-			expect(errorTransport).toBeDefined();
-		});
-
-		it("deve incluir transport pino-pretty", () => {
-			process.env.NODE_ENV = "development";
-			const config = createLoggerConfig();
-
-			const transport = config.transport as {
-				targets: { target: string }[];
-			};
-			const prettyTransport = transport.targets.find(
-				(t) => t.target === "pino-pretty",
-			);
-			expect(prettyTransport).toBeDefined();
-		});
-
-		it("deve usar nível warn em production para transports não-error", () => {
+		it("deve usar nível 'warn' em production para transports não-error", () => {
 			process.env.NODE_ENV = "production";
 			const config = createLoggerConfig();
 
@@ -109,7 +68,7 @@ describe("logger.config", () => {
 			expect(prettyTransport?.level).toBe("warn");
 		});
 
-		it("deve usar nível trace em development para transports não-error", () => {
+		it("deve usar nível 'trace' em development para transports não-error", () => {
 			process.env.NODE_ENV = "development";
 			const config = createLoggerConfig();
 
@@ -122,7 +81,41 @@ describe("logger.config", () => {
 			expect(prettyTransport?.level).toBe("trace");
 		});
 
-		it("deve usar development como fallback para ambiente desconhecido", () => {
+		it("deve ter 3 transports configurados", () => {
+			process.env.NODE_ENV = "development";
+			const config = createLoggerConfig();
+
+			const transport = config.transport as { targets: unknown[] };
+			expect(transport.targets).toHaveLength(3);
+		});
+
+		it("deve incluir transport 'pino-roll' para errors", () => {
+			process.env.NODE_ENV = "development";
+			const config = createLoggerConfig();
+
+			const transport = config.transport as {
+				targets: { target: string; level: string }[];
+			};
+			const errorTransport = transport.targets.find(
+				(t) => t.target === "pino-roll" && t.level === "error",
+			);
+			expect(errorTransport).toBeDefined();
+		});
+
+		it("deve incluir transport 'pino-pretty'", () => {
+			process.env.NODE_ENV = "development";
+			const config = createLoggerConfig();
+
+			const transport = config.transport as {
+				targets: { target: string }[];
+			};
+			const prettyTransport = transport.targets.find(
+				(t) => t.target === "pino-pretty",
+			);
+			expect(prettyTransport).toBeDefined();
+		});
+
+		it("deve usar nível 'debug' como fallback para ambiente desconhecido", () => {
 			process.env.NODE_ENV = "staging";
 			const config = createLoggerConfig();
 

@@ -1,6 +1,6 @@
 import { preparaFaturaSchema } from "@/routes/prepara-fatura/prepara-fatura.schemas";
 
-describe("prepara-fatura schemas", () => {
+describe("prepara-fatura.schemas", () => {
 	describe("preparaFaturaSchema", () => {
 		it("deve validar body válido", () => {
 			const body = {
@@ -46,6 +46,28 @@ describe("prepara-fatura schemas", () => {
 			expect(result.success).toBe(false);
 		});
 
+		it("deve rejeitar f_parceiro indefinido", () => {
+			const body = {
+				f_parceiro: undefined,
+				f_data_referencia: "2025-01-01",
+				f_tipo_de_faturamento: "parceiro",
+			};
+
+			const result = preparaFaturaSchema.safeParse(body);
+			expect(result.success).toBe(false);
+		});
+
+		it("deve rejeitar data indefinida", () => {
+			const body = {
+				f_parceiro: 1,
+				f_data_referencia: undefined,
+				f_tipo_de_faturamento: "parceiro",
+			};
+
+			const result = preparaFaturaSchema.safeParse(body);
+			expect(result.success).toBe(false);
+		});
+
 		it("deve rejeitar data inválida", () => {
 			const body = {
 				f_parceiro: 1,
@@ -62,6 +84,17 @@ describe("prepara-fatura schemas", () => {
 				f_parceiro: 1,
 				f_data_referencia: "2025-01-01",
 				f_tipo_de_faturamento: "invalido",
+			};
+
+			const result = preparaFaturaSchema.safeParse(body);
+			expect(result.success).toBe(false);
+		});
+
+		it("deve rejeitar tipo de faturamento indefinido", () => {
+			const body = {
+				f_parceiro: 1,
+				f_data_referencia: "2025-01-01",
+				f_tipo_de_faturamento: undefined,
 			};
 
 			const result = preparaFaturaSchema.safeParse(body);

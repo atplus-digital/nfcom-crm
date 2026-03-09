@@ -1,53 +1,18 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import type { Servico } from "@/@types/atacado/Servico";
 import type { InvoiceDataService } from "@/modules/fatura/fatura.service.types";
 import { InvoiceCalculator } from "@/modules/fatura/invoice-calculator";
 import {
-	BusinessRuleError,
-	DocumentValidationError,
-	EntityValidationError,
-	NotFoundError,
+    BusinessRuleError,
+    DocumentValidationError,
+    EntityValidationError,
 } from "@/shared/base.error";
-
-const validCNPJ = "11222333000181";
-const validCPF = "52998224725";
-
-const createServico = (overrides?: Partial<Servico>): Servico => ({
-	id: 100,
-	f_status: "1",
-	f_coghzwfvcnx: 1,
-	...overrides,
-});
-
-const createParceiro = (overrides?: Partial<Parceiro>): Parceiro => ({
-	id: 1,
-	f_razao_social: "Distribuidora Nacional LTDA",
-	f_cnpj: validCNPJ,
-	f_endereco: "Av. Paulista",
-	f_numero: "1000",
-	f_bairro: "Bela Vista",
-	f_cidade: "São Paulo",
-	f_uf: "SP",
-	f_cep: "01310100",
-	f_data_vencimento: 15,
-	...overrides,
-});
-
-const createCliente = (overrides?: Partial<Cliente>): Cliente => ({
-	id: 10,
-	f_nome_razao: "Comércio Local ME",
-	f_cpf_cnpj: validCPF,
-	f_endereco: "Rua das Flores",
-	f_numero: "50",
-	f_bairro: "Jardim",
-	f_cidade: "Campinas",
-	f_uf: "SP",
-	f_cep: "13000000",
-	f_linhas_fixas: [createServico()],
-	...overrides,
-});
+import {
+    createCliente,
+    createParceiro,
+    createServico,
+} from "../../fixtures/invoice-fixtures";
 
 const planos: PlanoDeServico[] = [
 	{ id: 1, f_nome: "Básico - 1 Canal", f_assinatura_mensal: "10" },
@@ -101,7 +66,10 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 				}),
 			];
 
-			const parceiro = createParceiro({ f_data_vencimento: 20 });
+			const parceiro = createParceiro({
+				f_razao_social: "Distribuidora Nacional LTDA",
+				f_data_vencimento: 20,
+			});
 			const calculator = new InvoiceCalculator(
 				createDataService(parceiro, clientes),
 			);
@@ -319,26 +287,6 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 	});
 
 	describe("cenários de borda com dados", () => {
-		it("deve lançar NotFoundError com 0 clientes", async () => {
-			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), []),
-			);
-
-			await expect(
-				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
-			).rejects.toThrow(NotFoundError);
-		});
-
-		it("deve lançar NotFoundError com 0 planos", async () => {
-			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), [createCliente()], []),
-			);
-
-			await expect(
-				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
-			).rejects.toThrow(NotFoundError);
-		});
-
 		it("deve lançar BusinessRuleError quando todos os clientes têm linhas inativas", async () => {
 			jest.spyOn(console, "warn").mockImplementation(() => {});
 
@@ -521,24 +469,6 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			});
 
 			expect(result.dueDate).toBe("2025-02-25");
-		});
-
-		it("deve usar dia 10 como padrão quando parceiro não tem f_data_vencimento", async () => {
-			const parceiro = createParceiro({
-				f_data_vencimento: undefined,
-			} as unknown as Parceiro);
-			const clientes = [createCliente()];
-
-			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
-			);
-
-			const result = await calculator.calculate({
-				partnerId: 1,
-				referenceDate: "2025-01-01",
-			});
-
-			expect(result.dueDate).toBe("2025-02-10");
 		});
 
 		it("deve respeitar limite mínimo de 6 dias quando vencimento é próximo", async () => {

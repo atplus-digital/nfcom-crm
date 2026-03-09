@@ -14,3 +14,4 @@ todos.json
 .tmp
 logs
 coverage
+generated

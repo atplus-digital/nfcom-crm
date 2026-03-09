@@ -2,13 +2,13 @@ import type { Parceiro } from "./Parceiro";
 import type { Servico } from "./Servico";
 
 export interface Cliente {
+	id?: number;
 	f_fk_servicos_adicionais?: number;
 	f_area_local?: string;
 	f_cpf_cnpj?: string;
 	f_telefone?: string;
 	f_nome_razao?: string;
 	f_cidade?: string;
-	id?: number;
 	f_tipo_assinante?: string;
 	f_endereco?: string;
 	f_cep?: string;

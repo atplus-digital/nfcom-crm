@@ -2,54 +2,31 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { documentValidator } from "@/modules/fatura/validators/document.validator";
 import { DocumentValidationError } from "@/shared/base.error";
-
-const validCNPJ = "11222333000181";
-const invalidCNPJ = "00000000000000";
-const validCPF = "52998224725";
-const invalidCPF = "00000000000";
-
-const createParceiro = (overrides?: Partial<Parceiro>): Parceiro => ({
-	id: 1,
-	f_razao_social: "Empresa Teste",
-	f_cnpj: validCNPJ,
-	f_endereco: "Rua Teste",
-	f_numero: "100",
-	f_bairro: "Centro",
-	f_cidade: "São Paulo",
-	f_uf: "SP",
-	f_cep: "01000000",
-	...overrides,
-});
-
-const createCliente = (overrides?: Partial<Cliente>): Cliente => ({
-	id: 1,
-	f_nome_razao: "Cliente Teste",
-	f_cpf_cnpj: validCPF,
-	f_endereco: "Rua Cliente",
-	f_numero: "200",
-	f_bairro: "Bairro",
-	f_cidade: "São Paulo",
-	f_uf: "SP",
-	f_cep: "02000000",
-	...overrides,
-});
+import {
+	INVALID_CNPJ,
+	INVALID_CPF,
+	VALID_CNPJ,
+	VALID_CPF,
+	createCliente,
+	createParceiro,
+} from "../../../fixtures/invoice-fixtures";
 
 describe("documentValidator", () => {
 	describe("validate", () => {
 		it("deve retornar true para CPF válido", () => {
-			expect(documentValidator.validate(validCPF)).toBe(true);
+			expect(documentValidator.validate(VALID_CPF)).toBe(true);
 		});
 
 		it("deve retornar false para CPF inválido", () => {
-			expect(documentValidator.validate(invalidCPF)).toBe(false);
+			expect(documentValidator.validate(INVALID_CPF)).toBe(false);
 		});
 
 		it("deve retornar true para CNPJ válido", () => {
-			expect(documentValidator.validate(validCNPJ)).toBe(true);
+			expect(documentValidator.validate(VALID_CNPJ)).toBe(true);
 		});
 
 		it("deve retornar false para CNPJ inválido", () => {
-			expect(documentValidator.validate(invalidCNPJ)).toBe(false);
+			expect(documentValidator.validate(INVALID_CNPJ)).toBe(false);
 		});
 
 		it("deve sanitizar documento com caracteres não numéricos", () => {
@@ -67,7 +44,7 @@ describe("documentValidator", () => {
 		});
 
 		it("deve retornar falha para CNPJ inválido", () => {
-			const parceiro = createParceiro({ f_cnpj: invalidCNPJ });
+			const parceiro = createParceiro({ f_cnpj: INVALID_CNPJ });
 			const result = documentValidator.validatePartner(parceiro);
 
 			expect(result.success).toBe(false);
@@ -88,7 +65,7 @@ describe("documentValidator", () => {
 		it("deve usar nome fallback quando f_razao_social é undefined", () => {
 			const parceiro = createParceiro({
 				f_razao_social: undefined,
-				f_cnpj: invalidCNPJ,
+				f_cnpj: INVALID_CNPJ,
 			} as unknown as Parceiro);
 			const result = documentValidator.validatePartner(parceiro);
 
@@ -108,7 +85,7 @@ describe("documentValidator", () => {
 		});
 
 		it("deve retornar falha para CPF inválido", () => {
-			const cliente = createCliente({ f_cpf_cnpj: invalidCPF });
+			const cliente = createCliente({ f_cpf_cnpj: INVALID_CPF });
 			const result = documentValidator.validateClient(cliente);
 
 			expect(result.success).toBe(false);
@@ -118,14 +95,14 @@ describe("documentValidator", () => {
 		});
 
 		it("deve validar cliente com CNPJ", () => {
-			const cliente = createCliente({ f_cpf_cnpj: validCNPJ });
+			const cliente = createCliente({ f_cpf_cnpj: VALID_CNPJ });
 			const result = documentValidator.validateClient(cliente);
 
 			expect(result.success).toBe(true);
 		});
 
 		it("deve falhar para CNPJ inválido em cliente", () => {
-			const cliente = createCliente({ f_cpf_cnpj: invalidCNPJ });
+			const cliente = createCliente({ f_cpf_cnpj: INVALID_CNPJ });
 			const result = documentValidator.validateClient(cliente);
 
 			expect(result.success).toBe(false);
@@ -137,7 +114,7 @@ describe("documentValidator", () => {
 		it("deve usar nome fallback quando f_nome_razao é undefined", () => {
 			const cliente = createCliente({
 				f_nome_razao: undefined,
-				f_cpf_cnpj: invalidCPF,
+				f_cpf_cnpj: INVALID_CPF,
 			} as unknown as Cliente);
 			const result = documentValidator.validateClient(cliente);
 
@@ -159,7 +136,7 @@ describe("documentValidator", () => {
 		});
 
 		it("deve lançar DocumentValidationError para parceiro inválido", () => {
-			const parceiro = createParceiro({ f_cnpj: invalidCNPJ });
+			const parceiro = createParceiro({ f_cnpj: INVALID_CNPJ });
 			const clientes = [createCliente()];
 
 			expect(() => documentValidator.validateAll(parceiro, clientes)).toThrow(
@@ -169,7 +146,7 @@ describe("documentValidator", () => {
 
 		it("deve lançar DocumentValidationError para cliente inválido", () => {
 			const parceiro = createParceiro();
-			const clientes = [createCliente({ f_cpf_cnpj: invalidCPF })];
+			const clientes = [createCliente({ f_cpf_cnpj: INVALID_CPF })];
 
 			expect(() => documentValidator.validateAll(parceiro, clientes)).toThrow(
 				DocumentValidationError,
