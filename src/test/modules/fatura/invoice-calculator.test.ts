@@ -168,7 +168,9 @@ describe("InvoiceCalculator", () => {
 	});
 
 	it("deve usar data de vencimento padrão quando parceiro não tem", async () => {
-		const parceiro = createParceiro({ f_data_vencimento: undefined });
+		const parceiro = createParceiro({
+			f_data_vencimento: undefined,
+		} as unknown as Parceiro);
 		const dataService = createMockDataService({ partner: parceiro });
 		const calculator = new InvoiceCalculator(dataService);
 

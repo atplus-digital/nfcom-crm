@@ -51,7 +51,7 @@ describe("entityValidator", () => {
 
 		it("deve retornar falha quando CNPJ é undefined", () => {
 			const result = entityValidator.validatePartner(
-				createValidParceiro({ f_cnpj: undefined }),
+				createValidParceiro({ f_cnpj: undefined } as unknown as Parceiro),
 			);
 
 			expect(result.success).toBe(false);
@@ -68,7 +68,7 @@ describe("entityValidator", () => {
 					f_razao_social: "",
 					f_cnpj: undefined,
 					f_endereco: "",
-				}),
+				} as unknown as Parceiro),
 			);
 
 			expect(result.success).toBe(false);
@@ -125,7 +125,7 @@ describe("entityValidator", () => {
 
 		it("deve retornar falha para CPF/CNPJ undefined", () => {
 			const result = entityValidator.validateClient(
-				createValidCliente({ f_cpf_cnpj: undefined }),
+				createValidCliente({ f_cpf_cnpj: undefined } as unknown as Cliente),
 			);
 
 			expect(result.success).toBe(false);

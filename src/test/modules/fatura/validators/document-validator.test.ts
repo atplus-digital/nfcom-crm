@@ -77,7 +77,9 @@ describe("documentValidator", () => {
 		});
 
 		it("deve retornar falha para CNPJ undefined", () => {
-			const parceiro = createParceiro({ f_cnpj: undefined });
+			const parceiro = createParceiro({
+				f_cnpj: undefined,
+			} as unknown as Parceiro);
 			const result = documentValidator.validatePartner(parceiro);
 
 			expect(result.success).toBe(false);

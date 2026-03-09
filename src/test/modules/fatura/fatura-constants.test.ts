@@ -13,7 +13,7 @@ describe("fatura.constants", () => {
 
 	describe("BILLING_TYPE_CONFIG", () => {
 		it("parceiro não permite faturamento direto ao cliente", () => {
-			expect(BILLING_TYPE_CONFIG["parceiro"].allowsDirectClientBilling).toBe(
+			expect(BILLING_TYPE_CONFIG.parceiro.allowsDirectClientBilling).toBe(
 				false,
 			);
 		});
@@ -25,9 +25,9 @@ describe("fatura.constants", () => {
 		});
 
 		it("cofaturamento permite faturamento direto ao cliente", () => {
-			expect(
-				BILLING_TYPE_CONFIG["cofaturamento"].allowsDirectClientBilling,
-			).toBe(true);
+			expect(BILLING_TYPE_CONFIG.cofaturamento.allowsDirectClientBilling).toBe(
+				true,
+			);
 		});
 
 		it("cliente-final permite faturamento direto ao cliente", () => {

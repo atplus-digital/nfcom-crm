@@ -1,7 +1,10 @@
 {
   "name": "nfcom-crm",
   "description": "",
-  "author": "Atplus/gugacarbo",
+  "author": "ATPlus",
+  "contributors": [
+    "github.com/gugacarbo"
+  ],
   "packageManager": "pnpm@10.28.2",
   "main": "dist/index.js",
   "keywords": [],
@@ -15,10 +18,10 @@
     "lint": "biome lint",
     "check": "biome check",
     "test": "jest --maxWorkers=8",
-    "coverage": "jest --maxWorkers=8 --coverage && coverage-badges",
+    "coverage": "pnpm test --coverage && coverage-badges --output docs/coverage-badges.svg",
     "make-badges": "coverage-badges",
     "types:gen": "tsx scripts/types-gen/index.mts",
-    "commit.": "pnpm format && pnpm lint --fix && pnpm check --fix && git add . && git commit -m"
+    "commit.": "pnpm format && pnpm lint --write && pnpm check --write && pnpm coverage && pnpm build && git add . && git commit -m"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError, type AxiosRequestHeaders } from "axios";
 import {
 	DEFAULT_MAX_RETRIES,
 	DEFAULT_RETRY_DELAY,
@@ -43,7 +43,7 @@ describe("http-client utils", () => {
 				status: 500,
 				statusText: "Internal Server Error",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 
 			expect(extractErrorMessage(error)).toBe("API Error");
@@ -87,7 +87,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Internal Server Error",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(true);
 		});
@@ -99,7 +99,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Bad Gateway",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(true);
 		});
@@ -111,7 +111,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Too Many Requests",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(true);
 		});
@@ -123,7 +123,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Bad Request",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(false);
 		});
@@ -135,7 +135,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Not Found",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(false);
 		});
@@ -147,7 +147,7 @@ describe("http-client utils", () => {
 				data: {},
 				statusText: "Unauthorized",
 				headers: {},
-				config: { headers: {} } as any,
+				config: { headers: {} as AxiosRequestHeaders },
 			};
 			expect(shouldRetry(error)).toBe(false);
 		});

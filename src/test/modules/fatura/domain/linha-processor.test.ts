@@ -47,7 +47,10 @@ describe("LineProcessor", () => {
 		});
 
 		it("deve filtrar planos sem id", () => {
-			const planos = [createPlano({ id: undefined }), createPlano({ id: 4 })];
+			const planos = [
+				createPlano({ id: undefined } as unknown as PlanoDeServico),
+				createPlano({ id: 4 }),
+			];
 			const processor = LineProcessor.create(planos);
 			const cliente = createCliente();
 
@@ -98,7 +101,9 @@ describe("LineProcessor", () => {
 
 		it("deve lançar BusinessRuleError quando f_linhas_fixas é undefined", () => {
 			const processor = LineProcessor.create(defaultPlanos);
-			const cliente = createCliente({ f_linhas_fixas: undefined });
+			const cliente = createCliente({
+				f_linhas_fixas: undefined,
+			} as unknown as Cliente);
 
 			expect(() => processor.processClientLines(cliente)).toThrow(
 				BusinessRuleError,

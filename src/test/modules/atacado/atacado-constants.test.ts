@@ -17,7 +17,7 @@ describe("atacado.constants", () => {
 	describe("API_HEADERS", () => {
 		it("deve ter os valores de header padrão", () => {
 			expect(API_HEADERS["Content-Type"]).toBe("application/json");
-			expect(API_HEADERS["Accept"]).toBe("application/json");
+			expect(API_HEADERS.Accept).toBe("application/json");
 			expect(API_HEADERS["X-App"]).toBe("a_atacado");
 		});
 	});
