@@ -1,7 +1,7 @@
 import { AtacadoDataService } from "./atacado-data.service";
-import type { InvoiceDataService } from "./invoice-data.service.types";
 import type { InvoiceCalculatorService } from "./invoice-calculator";
 import { InvoiceCalculator } from "./invoice-calculator";
+import type { InvoiceDataService } from "./invoice-data.service.types";
 
 function createInvoiceService(
 	dataService: InvoiceDataService,
