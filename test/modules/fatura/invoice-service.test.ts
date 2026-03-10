@@ -17,9 +17,9 @@ jest.mock("@/modules/atacado-repository/wholesale.repository", () => ({
 	},
 }));
 
-import { AtacadoInvoiceDataService } from "@/modules/invoice-service/invoice.service";
+import { AtacadoDataService } from "@/modules/invoice-service/atacado-data.service";
 
-describe("AtacadoInvoiceDataService", () => {
+describe("AtacadoDataService", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
@@ -33,7 +33,7 @@ describe("AtacadoInvoiceDataService", () => {
 		mockFindClientesAtivos.mockResolvedValue(clients);
 		mockFindAllPlanos.mockResolvedValue(plans);
 
-		const service = new AtacadoInvoiceDataService();
+		const service = new AtacadoDataService();
 		const result = await service.fetchInvoiceData(1);
 
 		expect(result).toEqual({ partner, clients, plans });
@@ -50,7 +50,7 @@ describe("AtacadoInvoiceDataService", () => {
 		mockFindClientesAtivos.mockResolvedValue([]);
 		mockFindAllPlanos.mockResolvedValue([]);
 
-		const service = new AtacadoInvoiceDataService();
+		const service = new AtacadoDataService();
 
 		await expect(service.fetchInvoiceData(999)).rejects.toThrow("Not Found");
 	});
@@ -61,7 +61,7 @@ describe("AtacadoInvoiceDataService", () => {
 		mockFindClientesAtivos.mockResolvedValue([]);
 		mockFindAllPlanos.mockResolvedValue([]);
 
-		const service = new AtacadoInvoiceDataService();
+		const service = new AtacadoDataService();
 		const result = await service.fetchInvoiceData("abc");
 
 		expect(result.partner).toEqual(partner);

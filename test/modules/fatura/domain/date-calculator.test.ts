@@ -1,7 +1,7 @@
 import {
     calculateDueDate,
     formatToISODate,
-} from "@/modules/invoice-service/domain/date-calculator";
+} from "@/modules/invoice-service/invoice-calculator/domain/date-calculator";
 
 describe("date-calculator", () => {
 	describe("formatToISODate", () => {

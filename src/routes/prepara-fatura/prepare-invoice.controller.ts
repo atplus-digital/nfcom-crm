@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { formatToISODate } from "@/modules/invoice-service/domain/date-calculator";
 import { invoiceService } from "@/modules/invoice-service/invoice.service";
+import { formatToISODate } from "@/modules/invoice-service/invoice-calculator/domain/date-calculator";
 
 import type {
 	PreparaFaturaBody,

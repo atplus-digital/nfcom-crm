@@ -1,22 +1,21 @@
-import { atacadoRepository } from "@/modules/atacado-repository/wholesale.repository";
-import type { InvoiceDataService } from "./invoice.service.types";
+import { AtacadoDataService } from "./atacado-data.service";
+import type { InvoiceDataService } from "./invoice-data.service.types";
+import type { InvoiceCalculatorService } from "./invoice-calculator";
 import { InvoiceCalculator } from "./invoice-calculator";
 
-class AtacadoInvoiceDataService implements InvoiceDataService {
-	async fetchInvoiceData(partnerId: string | number) {
-		const [partner, clients, plans] = await Promise.all([
-			atacadoRepository.findParceiroById(partnerId),
-			atacadoRepository.findClientesAtivosByParceiroId({
-				partnerId: partnerId,
-				activeLineStatus: true,
-			}),
-			atacadoRepository.findAllPlanosDeServico(),
-		]);
-
-		return { partner, clients, plans };
-	}
+function createInvoiceService(
+	dataService: InvoiceDataService,
+): InvoiceCalculatorService {
+	return new InvoiceCalculator(dataService);
 }
 
-const invoiceService = new InvoiceCalculator(new AtacadoInvoiceDataService());
+const invoiceService = createInvoiceService(new AtacadoDataService());
 
-export { AtacadoInvoiceDataService, InvoiceCalculator, invoiceService };
+export {
+	AtacadoDataService,
+	createInvoiceService,
+	InvoiceCalculator,
+	invoiceService,
+};
+
+export type { InvoiceCalculatorService, InvoiceDataService };

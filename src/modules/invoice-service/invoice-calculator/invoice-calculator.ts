@@ -1,20 +1,20 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import { documentValidator } from "@/modules/invoice-service/validators/document.validator";
-import { entityValidator } from "@/modules/invoice-service/validators/entity.validator";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
-import { createClientDetail } from "./domain/client-builder";
-import { calculateDueDate } from "./domain/date-calculator";
-import { LineProcessor } from "./domain/line-processor";
-import { createPartnerInvoice } from "./domain/partner-builder";
-import { DATES } from "./invoice.constants";
+import { DATES } from "../invoice.constants";
 import type {
 	CalculateInvoiceParams,
 	ClientDetail,
 	InvoicePartner,
-} from "./invoice.schemas";
-import type { InvoiceDataService } from "./invoice.service.types";
+} from "../invoice.schemas";
+import type { InvoiceDataService } from "../invoice-data.service.types";
+import { createClientDetail } from "./domain/client-builder";
+import { calculateDueDate } from "./domain/date-calculator";
+import { LineProcessor } from "./domain/line-processor";
+import { createPartnerInvoice } from "./domain/partner-builder";
+import { documentValidator } from "./validators/document.validator";
+import { entityValidator } from "./validators/entity.validator";
 
 export class InvoiceCalculator {
 	private readonly dataService: InvoiceDataService;
@@ -96,7 +96,14 @@ export class InvoiceCalculator {
 					processed.push(createClientDetail(client, lines, total));
 				}
 			} catch (error) {
-				console.warn(`Erro ao processar cliente ${client.id}: ${error}`);
+				throw BusinessRuleError.create(
+					`Falha ao processar cliente ${client.id}`,
+					{
+						resource: "Cliente",
+						identifier: client.id,
+						details: error instanceof Error ? error.message : String(error),
+					},
+				);
 			}
 		}
 
@@ -115,7 +122,7 @@ export class InvoiceCalculator {
 		partner: Parceiro,
 		referenceDate: string,
 	): string {
-		const dueDay = partner.f_data_vencimento ?? DATES.DEFAULT_DUE_DAY;
+		const dueDay = partner.f_data_vencimento || DATES.DEFAULT_DUE_DAY;
 		return calculateDueDate(referenceDate, dueDay);
 	}
 }

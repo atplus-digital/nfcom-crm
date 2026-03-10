@@ -1,6 +1,6 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { entityValidator } from "@/modules/invoice-service/validators/entity.validator";
+import { entityValidator } from "@/modules/invoice-service/invoice-calculator/validators/entity.validator";
 import { EntityValidationError } from "@/shared/base.error";
 
 import {

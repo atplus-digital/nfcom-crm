@@ -2,7 +2,7 @@ import { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator";
-import type { InvoiceDataService } from "@/modules/invoice-service/invoice.service.types";
+import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
 import {
     BusinessRuleError,
     DocumentValidationError,

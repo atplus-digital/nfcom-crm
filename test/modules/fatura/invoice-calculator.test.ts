@@ -149,9 +149,7 @@ describe("InvoiceCalculator", () => {
 		expect(plano4?.total).toBe(6);
 	});
 
-	it("deve ignorar clientes com erro de processamento e continuar", async () => {
-		const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
-
+	it("deve lançar BusinessRuleError quando cliente tem erro de processamento", async () => {
 		const clientes = [
 			createCliente({
 				id: 10,
@@ -166,15 +164,12 @@ describe("InvoiceCalculator", () => {
 		const dataService = createMockDataService({ clients: clientes });
 		const calculator = new InvoiceCalculator(dataService);
 
-		const result = await calculator.calculate({
-			partnerId: 1,
-			referenceDate: "2025-01-01",
-		});
-
-		expect(result.clients).toHaveLength(1);
-		expect(consoleSpy).toHaveBeenCalled();
-
-		consoleSpy.mockRestore();
+		await expect(
+			calculator.calculate({
+				partnerId: 1,
+				referenceDate: "2025-01-01",
+			}),
+		).rejects.toThrow(BusinessRuleError);
 	});
 
 	it("deve chamar dataService.fetchInvoiceData com partnerId correto", async () => {

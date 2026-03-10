@@ -2,7 +2,7 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator";
-import type { InvoiceDataService } from "@/modules/invoice-service/invoice.service.types";
+import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
 import {
     BusinessRuleError,
     DocumentValidationError,
@@ -151,8 +151,6 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 
 	describe("fluxo com clientes mistos (válidos e inválidos)", () => {
 		it("deve processar apenas clientes com linhas ativas, ignorando inativos", async () => {
-			jest.spyOn(console, "warn").mockImplementation(() => {});
-
 			const clientes = [
 				createCliente({
 					id: 10,
@@ -183,9 +181,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			expect(result.invoiceTotal).toBe(60);
 		});
 
-		it("deve ignorar clientes com plano inexistente e processar os demais", async () => {
-			jest.spyOn(console, "warn").mockImplementation(() => {});
-
+		it("deve lançar BusinessRuleError quando cliente tem plano inexistente", async () => {
 			const clientes = [
 				createCliente({
 					id: 10,
@@ -201,13 +197,12 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 				createDataService(createParceiro(), clientes),
 			);
 
-			const result = await calculator.calculate({
-				partnerId: 1,
-				referenceDate: "2025-01-01",
-			});
-
-			expect(result.clients).toHaveLength(1);
-			expect(result.invoiceTotal).toBe(10);
+			await expect(
+				calculator.calculate({
+					partnerId: 1,
+					referenceDate: "2025-01-01",
+				}),
+			).rejects.toThrow(BusinessRuleError);
 		});
 	});
 
@@ -288,8 +283,6 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 
 	describe("cenários de borda com dados", () => {
 		it("deve lançar BusinessRuleError quando todos os clientes têm linhas inativas", async () => {
-			jest.spyOn(console, "warn").mockImplementation(() => {});
-
 			const clientes = [
 				createCliente({
 					id: 10,

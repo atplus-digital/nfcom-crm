@@ -1,5 +1,5 @@
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import type { PartnerInvoice } from "../invoice.schemas";
+import type { PartnerInvoice } from "../../invoice.schemas";
 
 function createPartnerInvoice(
 	partner: Parceiro,
