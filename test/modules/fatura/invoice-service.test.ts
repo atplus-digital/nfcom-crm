@@ -17,7 +17,7 @@ jest.mock("@/modules/atacado/wholesale.repository", () => ({
 	},
 }));
 
-import { AtacadoInvoiceDataService } from "@/modules/fatura/invoice.service";
+import { AtacadoInvoiceDataService } from "@/modules/invoice-service/invoice.service";
 
 describe("AtacadoInvoiceDataService", () => {
 	beforeEach(() => {

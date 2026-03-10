@@ -1,22 +1,22 @@
 import { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import { InvoiceCalculator } from "@/modules/fatura/invoice-calculator";
-import type { InvoiceDataService } from "@/modules/fatura/invoice.service.types";
+import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator";
+import type { InvoiceDataService } from "@/modules/invoice-service/invoice.service.types";
 import {
-	BusinessRuleError,
-	DocumentValidationError,
-	EntityValidationError,
-	ExternalApiError,
+    BusinessRuleError,
+    DocumentValidationError,
+    EntityValidationError,
+    ExternalApiError,
 } from "@/shared/base.error";
 import {
-	INVALID_CNPJ,
-	INVALID_CPF,
-	VALID_CPF,
-	createCliente,
-	createMockDataService,
-	createParceiro,
-	createServico,
+    INVALID_CNPJ,
+    INVALID_CPF,
+    VALID_CPF,
+    createCliente,
+    createMockDataService,
+    createParceiro,
+    createServico,
 } from "../../fixtures/invoice-fixtures";
 
 describe("InvoiceCalculator - edge cases e cenários negativos", () => {

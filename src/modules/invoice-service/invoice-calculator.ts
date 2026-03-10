@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import { documentValidator } from "@/modules/fatura/validators/document.validator";
-import { entityValidator } from "@/modules/fatura/validators/entity.validator";
+import { documentValidator } from "@/modules/invoice-service/validators/document.validator";
+import { entityValidator } from "@/modules/invoice-service/validators/entity.validator";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
 import { createClientDetail } from "./domain/client-builder";
 import { calculateDueDate } from "./domain/date-calculator";
@@ -10,9 +10,9 @@ import { LineProcessor } from "./domain/line-processor";
 import { createPartnerInvoice } from "./domain/partner-builder";
 import { DATES } from "./invoice.constants";
 import type {
-	CalculateInvoiceParams,
-	ClientDetail,
-	InvoicePartner,
+    CalculateInvoiceParams,
+    ClientDetail,
+    InvoicePartner,
 } from "./invoice.schemas";
 import type { InvoiceDataService } from "./invoice.service.types";
 

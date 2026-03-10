@@ -1,6 +1,6 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { runValidateAll } from "@/modules/fatura/validators/validation-utils";
+import { runValidateAll } from "@/modules/invoice-service/validators/validation-utils";
 import { Failure, Success } from "@/shared/result";
 
 const mockParceiro: Parceiro = { id: 1, f_razao_social: "Parceiro" };

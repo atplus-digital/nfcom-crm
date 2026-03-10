@@ -1,11 +1,11 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { entityValidator } from "@/modules/fatura/validators/entity.validator";
+import { entityValidator } from "@/modules/invoice-service/validators/entity.validator";
 import { EntityValidationError } from "@/shared/base.error";
 
 import {
-	createCliente,
-	createParceiro,
+    createCliente,
+    createParceiro,
 } from "../../../fixtures/invoice-fixtures";
 
 describe("entityValidator", () => {

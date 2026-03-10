@@ -1,4 +1,4 @@
-import { LINES, PLANS } from "@/modules/fatura/domain/constants";
+import { LINES, PLANS } from "@/modules/invoice-service/domain/constants";
 
 describe("domain constants", () => {
 	it("deve ter STATUS_ACTIVE como '1'", () => {

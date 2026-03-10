@@ -1,7 +1,7 @@
 import {
-	calculateDueDate,
-	formatToISODate,
-} from "@/modules/fatura/domain/date-calculator";
+    calculateDueDate,
+    formatToISODate,
+} from "@/modules/invoice-service/domain/date-calculator";
 
 describe("date-calculator - edge cases", () => {
 	beforeEach(() => {

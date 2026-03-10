@@ -1,8 +1,8 @@
-import z from "zod";
 import {
-	InvoicePartnerSchema,
-	TipoFaturamentoEnum,
-} from "@/modules/fatura/invoice.schemas";
+    InvoicePartnerSchema,
+    TipoFaturamentoEnum,
+} from "@/modules/invoice-service/invoice.schemas";
+import z from "zod";
 
 export const preparaFaturaSchema = z.object({
 	f_parceiro: z

@@ -1,5 +1,5 @@
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { createPartnerInvoice } from "@/modules/fatura/domain/partner-builder";
+import { createPartnerInvoice } from "@/modules/invoice-service/domain/partner-builder";
 
 const mockParceiro: Parceiro = {
 	id: 1,

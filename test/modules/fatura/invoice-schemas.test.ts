@@ -3,7 +3,7 @@ import {
     GroupedServiceSchema,
     ProcessedLineSchema,
     TipoFaturamentoEnum,
-} from "@/modules/fatura/invoice.schemas";
+} from "@/modules/invoice-service/invoice.schemas";
 
 describe("fatura.schemas", () => {
 	describe("TipoFaturamentoEnum", () => {

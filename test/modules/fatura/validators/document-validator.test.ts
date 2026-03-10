@@ -1,14 +1,14 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { documentValidator } from "@/modules/fatura/validators/document.validator";
+import { documentValidator } from "@/modules/invoice-service/validators/document.validator";
 import { DocumentValidationError } from "@/shared/base.error";
 import {
-	INVALID_CNPJ,
-	INVALID_CPF,
-	VALID_CNPJ,
-	VALID_CPF,
-	createCliente,
-	createParceiro,
+    INVALID_CNPJ,
+    INVALID_CPF,
+    VALID_CNPJ,
+    VALID_CPF,
+    createCliente,
+    createParceiro,
 } from "../../../fixtures/invoice-fixtures";
 
 describe("documentValidator", () => {
