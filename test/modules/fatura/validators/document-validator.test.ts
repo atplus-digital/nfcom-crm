@@ -3,12 +3,12 @@ import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { documentValidator } from "@/modules/invoice-service/invoice-calculator/validators/document.validator";
 import { DocumentValidationError } from "@/shared/base.error";
 import {
-    INVALID_CNPJ,
-    INVALID_CPF,
-    VALID_CNPJ,
-    VALID_CPF,
-    createCliente,
-    createParceiro,
+	createCliente,
+	createParceiro,
+	INVALID_CNPJ,
+	INVALID_CPF,
+	VALID_CNPJ,
+	VALID_CPF,
 } from "../../../fixtures/invoice-fixtures";
 
 describe("documentValidator", () => {

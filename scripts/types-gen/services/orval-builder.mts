@@ -4,7 +4,7 @@ import type { GenerationConfig } from "../config/generation.mts";
 export function buildOrvalConfig(
 	inputPath: string,
 	name: string,
-	config: GenerationConfig
+	config: GenerationConfig,
 ): Options {
 	return {
 		input: { target: inputPath },

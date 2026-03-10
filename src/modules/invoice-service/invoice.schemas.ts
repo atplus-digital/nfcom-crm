@@ -32,7 +32,7 @@ const GroupedServiceSchema = z.object({
 });
 
 const ClientDetailSchema = z.object({
-	client: z.unknown(),
+	client: z.custom<Cliente>(),
 	total: z.number(),
 	totalLines: z.number(),
 	lines: z.array(ProcessedLineSchema),
@@ -40,7 +40,7 @@ const ClientDetailSchema = z.object({
 });
 
 const PartnerInvoiceSchema = z.object({
-	partner: z.unknown(),
+	partner: z.custom<Parceiro>(),
 	invoiceTotal: z.number(),
 	totalClients: z.number(),
 	totalLines: z.number(),

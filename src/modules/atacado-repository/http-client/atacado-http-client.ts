@@ -59,7 +59,7 @@ class AtacadoHttpClient {
 
 	async post<T>(
 		route: AtacadoRouteWithSuffix,
-		data?: unknown,
+		data?: Record<string, unknown>,
 		config?: AxiosRequestConfig,
 	): Promise<ApiResponse<T>> {
 		return this.executeWithRetry(() =>

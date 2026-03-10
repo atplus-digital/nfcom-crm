@@ -1,11 +1,11 @@
 import type { Parceiro } from "@/@types/atacado/Parceiro";
-import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator";
+import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
 import {
-    createCliente,
-    createMockDataService,
-    createParceiro,
-    createServico,
+	createCliente,
+	createMockDataService,
+	createParceiro,
+	createServico,
 } from "../../fixtures/invoice-fixtures";
 
 describe("InvoiceCalculator", () => {

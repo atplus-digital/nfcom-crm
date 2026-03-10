@@ -10,7 +10,7 @@ export function loadRelationMaps(): RelationMaps {
 	const fkMap = new Map<string, string>();
 	const parentRelationsMap = new Map<string, ParentVirtualField[]>();
 	const collectionToName = new Map(
-		COLLECTIONS.map(c => [c.collection, c.name]),
+		COLLECTIONS.map((c) => [c.collection, c.name]),
 	);
 
 	for (const col of COLLECTIONS) {

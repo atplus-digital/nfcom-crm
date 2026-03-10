@@ -42,11 +42,13 @@ const isEmptyValue = (value: unknown): boolean => {
 };
 
 const validateEntity = (
-	entity: Record<string, unknown>,
+	entity: object,
 	requiredFields: readonly RequiredField[],
 ): ValidationResult => {
 	const errors = requiredFields
-		.filter(({ field }) => isEmptyValue(entity[field]))
+		.filter(({ field }) =>
+			isEmptyValue((entity as Record<string, unknown>)[field]),
+		)
 		.map(({ field, label }) => ({ field, label }));
 
 	if (errors.length === 0) {
@@ -57,21 +59,15 @@ const validateEntity = (
 
 const entityValidator = {
 	validatePartner(partner: Parceiro): ValidationResult {
-		return validateEntity(
-			partner as Record<string, unknown>,
-			REQUIRED_PARTNER_FIELDS,
-		);
+		return validateEntity(partner, REQUIRED_PARTNER_FIELDS);
 	},
 
 	validateClient(client: Cliente): ValidationResult {
-		return validateEntity(
-			client as Record<string, unknown>,
-			REQUIRED_CLIENT_FIELDS,
-		);
+		return validateEntity(client, REQUIRED_CLIENT_FIELDS);
 	},
 
 	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
-		runValidateAll<Parceiro, Cliente, FieldError[]>({
+		runValidateAll<FieldError[]>({
 			partner,
 			clients,
 			validatePartner: (p) => this.validatePartner(p),

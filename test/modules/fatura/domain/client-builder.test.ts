@@ -1,6 +1,6 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
-import { createClientDetail } from "@/modules/invoice-service/invoice-calculator/domain/client-builder";
 import type { ProcessedLine } from "@/modules/invoice-service/invoice.schemas";
+import { createClientDetail } from "@/modules/invoice-service/invoice-calculator/domain/client-builder";
 
 const mockCliente: Cliente = {
 	id: 1,

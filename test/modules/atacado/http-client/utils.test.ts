@@ -1,12 +1,12 @@
-import {
-    DEFAULT_MAX_RETRIES,
-    DEFAULT_RETRY_DELAY,
-    DEFAULT_TIMEOUT,
-    extractErrorMessage,
-    shouldRetry,
-    sleep,
-} from "@/modules/atacado-repository/http-client/utils";
 import { AxiosError, type AxiosRequestHeaders } from "axios";
+import {
+	DEFAULT_MAX_RETRIES,
+	DEFAULT_RETRY_DELAY,
+	DEFAULT_TIMEOUT,
+	extractErrorMessage,
+	shouldRetry,
+	sleep,
+} from "@/modules/atacado-repository/http-client/utils";
 
 describe("http-client utils", () => {
 	describe("constants", () => {

@@ -8,17 +8,20 @@ jest.mock("@/env", () => ({
 const mockGet = jest.fn();
 const mockPost = jest.fn();
 
-jest.mock("@/modules/atacado-repository/http-client/atacado-http-client", () => ({
-	atacadoHttpClient: { get: mockGet, post: mockPost },
-	ATACADO_ROUTES: {
-		parceiros: "/t_parceiros",
-		clientes: "/t_clientes",
-		planosDeServico: "/t_planos_de_servico",
-		faturas: "/t_nfcom_faturas",
-		cobrancas: "/t_nfcom_cobrancas",
-		notasFiscais: "/t_nfcom_notas",
-	},
-}));
+jest.mock(
+	"@/modules/atacado-repository/http-client/atacado-http-client",
+	() => ({
+		atacadoHttpClient: { get: mockGet, post: mockPost },
+		ATACADO_ROUTES: {
+			parceiros: "/t_parceiros",
+			clientes: "/t_clientes",
+			planosDeServico: "/t_planos_de_servico",
+			faturas: "/t_nfcom_faturas",
+			cobrancas: "/t_nfcom_cobrancas",
+			notasFiscais: "/t_nfcom_notas",
+		},
+	}),
+);
 
 import { atacadoRepository } from "@/modules/atacado-repository/wholesale.repository";
 import { NotFoundError } from "@/shared/base.error";

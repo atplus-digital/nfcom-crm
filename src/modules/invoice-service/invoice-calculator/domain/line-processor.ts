@@ -9,21 +9,24 @@ import type {
 import { LINES, PLANS } from "./constants";
 
 interface PlanInfo {
-	readonly id: string | number;
+	readonly id: number;
 	readonly name: string;
 	readonly monthlyValue: number;
 }
 
-type PlanLookup = Map<string | number, PlanInfo>;
+type PlanLookup = Map<number, PlanInfo>;
 
 const buildPlanLookup = (plans: readonly PlanoDeServico[]): PlanLookup => {
 	return new Map(
 		plans
-			.filter((plan) => plan.id !== undefined)
+			.filter(
+				(plan): plan is PlanoDeServico & { id: number } =>
+					plan.id !== undefined,
+			)
 			.map((plan) => [
-				plan.id as string | number,
+				plan.id,
 				{
-					id: plan.id as string | number,
+					id: plan.id,
 					name: plan.f_nome ?? "",
 					monthlyValue: Number(plan.f_assinatura_mensal) || 0,
 				},
@@ -32,9 +35,9 @@ const buildPlanLookup = (plans: readonly PlanoDeServico[]): PlanLookup => {
 };
 
 const getPlanInfo = (
-	planId: string | number | undefined,
+	planId: number | undefined,
 	lookup: PlanLookup,
-	clientId: string | number | undefined,
+	clientId: number | string | undefined,
 ): PlanInfo => {
 	if (!planId) {
 		throw BusinessRuleError.create(`Invalid plan ID for client ${clientId}`);
@@ -87,10 +90,8 @@ class LineProcessor {
 				continue;
 			}
 
-			const planId = line[LINES.PLAN_ID_FIELD as keyof typeof line] as
-				| string
-				| number
-				| undefined;
+			const planIdField = "f_coghzwfvcnx" as const;
+			const planId = line[planIdField] as number | undefined;
 			const planInfo = getPlanInfo(planId, this.planLookup, client.id);
 
 			processedLines.push({

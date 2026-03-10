@@ -1,17 +1,17 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
-import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator";
+import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
 import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
 import {
-    BusinessRuleError,
-    DocumentValidationError,
-    EntityValidationError,
+	BusinessRuleError,
+	DocumentValidationError,
+	EntityValidationError,
 } from "@/shared/base.error";
 import {
-    createCliente,
-    createParceiro,
-    createServico,
+	createCliente,
+	createParceiro,
+	createServico,
 } from "../../fixtures/invoice-fixtures";
 
 const planos: PlanoDeServico[] = [

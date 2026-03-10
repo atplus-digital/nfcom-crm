@@ -1,7 +1,7 @@
 import {
-    API_HEADERS,
-    HEADERS,
-    PAGINATION,
+	API_HEADERS,
+	HEADERS,
+	PAGINATION,
 } from "@/modules/atacado-repository/wholesale.constants";
 
 describe("atacado.constants", () => {

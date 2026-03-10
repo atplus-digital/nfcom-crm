@@ -4,8 +4,8 @@ import { entityValidator } from "@/modules/invoice-service/invoice-calculator/va
 import { EntityValidationError } from "@/shared/base.error";
 
 import {
-    createCliente,
-    createParceiro,
+	createCliente,
+	createParceiro,
 } from "../../../fixtures/invoice-fixtures";
 
 describe("entityValidator", () => {
@@ -114,18 +114,15 @@ describe("entityValidator", () => {
 	describe("validateAll", () => {
 		it("deve passar quando todos os campos estão preenchidos", () => {
 			expect(() =>
-				entityValidator.validateAll(createParceiro(), [
-					createCliente(),
-				]),
+				entityValidator.validateAll(createParceiro(), [createCliente()]),
 			).not.toThrow();
 		});
 
 		it("deve lançar EntityValidationError para parceiro inválido", () => {
 			expect(() =>
-				entityValidator.validateAll(
-					createParceiro({ f_razao_social: "" }),
-					[createCliente()],
-				),
+				entityValidator.validateAll(createParceiro({ f_razao_social: "" }), [
+					createCliente(),
+				]),
 			).toThrow(EntityValidationError);
 		});
 
@@ -161,7 +158,10 @@ describe("entityValidator", () => {
 
 		it("deve usar ID fallback quando cliente.id é undefined", () => {
 			const clientes = [
-				createCliente({ id: undefined, f_nome_razao: "" } as unknown as Cliente),
+				createCliente({
+					id: undefined,
+					f_nome_razao: "",
+				} as unknown as Cliente),
 			];
 
 			expect(() =>

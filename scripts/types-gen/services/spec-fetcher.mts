@@ -1,11 +1,11 @@
-import { writeFile, mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import type { GenerationConfig } from "../config/generation.mts";
 import { createSwaggerClient } from "./swagger-client.mts";
 
 export async function fetchSwaggerSpec(
 	name: string,
 	collection: string,
-	config: GenerationConfig
+	config: GenerationConfig,
 ): Promise<string | null> {
 	const client = createSwaggerClient();
 	const params = new URLSearchParams({ ns: `collections/${collection}` });

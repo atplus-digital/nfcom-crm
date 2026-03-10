@@ -2,12 +2,12 @@ import { rm, rmdir } from "node:fs/promises";
 import { generate } from "orval";
 import {
 	defaultConfig,
-	GenerationConfig,
+	type GenerationConfig,
 	resolveOutputPath,
 } from "./config/generation.mts";
+import type { GenerationResult } from "./config/types.mts";
 import { loadCollectionEntries, loadRelationMaps } from "./loaders/index.mts";
 import { extractMainInterface } from "./services/extractor.mts";
-import type { GenerationResult } from "./config/types.mts";
 
 export interface GeneratorOptions {
 	config?: Partial<GenerationConfig>;
@@ -53,7 +53,7 @@ export async function runGenerator(
 		}
 	}
 
-	const successCount = results.filter(r => r.success).length;
+	const successCount = results.filter((r) => r.success).length;
 	console.log(
 		`\n✨ ${successCount}/${entries.length} schema(s) generated successfully`,
 	);

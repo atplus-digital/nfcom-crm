@@ -1,6 +1,6 @@
 import {
-    calculateDueDate,
-    formatToISODate,
+	calculateDueDate,
+	formatToISODate,
 } from "@/modules/invoice-service/invoice-calculator/domain/date-calculator";
 
 describe("date-calculator - edge cases", () => {

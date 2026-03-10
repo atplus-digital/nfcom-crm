@@ -171,18 +171,18 @@ describe("errorHandler", () => {
 		);
 	});
 
-	it("deve retornar o status code se for um AppError e o status não é número ",() => {
-		const error = Object.assign(new NotFoundError("Error with invalid statusCode"), {
-			statusCode: "400",
-		});
+	it("deve retornar o status code se for um AppError e o status não é número ", () => {
+		const error = Object.assign(
+			new NotFoundError("Error with invalid statusCode"),
+			{
+				statusCode: "400",
+			},
+		);
 		const request = createMockRequest();
 		const reply = createMockReply();
 
 		errorHandler(error, request, reply);
 
-		expect(reply.status).toHaveBeenCalledWith(
-			"400",
-		);
-
-	})
+		expect(reply.status).toHaveBeenCalledWith("400");
+	});
 });

@@ -19,10 +19,16 @@ export const defaultConfig: GenerationConfig = {
 	formatOutput: true,
 };
 
-export function resolveOutputPath(name: string, config: GenerationConfig): string {
+export function resolveOutputPath(
+	name: string,
+	config: GenerationConfig,
+): string {
 	return join(config.outputDir, `${name}.ts`);
 }
 
-export function resolveTempPath(name: string, config: GenerationConfig): string {
+export function resolveTempPath(
+	name: string,
+	config: GenerationConfig,
+): string {
 	return join(config.tempDir, `${name}.json`);
 }

@@ -9,7 +9,7 @@ const config: Config = {
   preset: "ts-jest",
 	testEnvironment: "node",
 	clearMocks: true,
-	collectCoverage: true,
+	collectCoverage: false,
 	collectCoverageFrom: [
 		  "<rootDir>/src/**/*.{tsx,ts}",
       "!**/*.{js,d.ts}"

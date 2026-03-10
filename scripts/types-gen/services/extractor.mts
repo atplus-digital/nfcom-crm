@@ -5,7 +5,7 @@ export async function extractMainInterface(
 	filePath: string,
 	interfaceName: string,
 	fkMap: Map<string, string>,
-	parentRelationsMap: Map<string, ParentVirtualField[]>
+	parentRelationsMap: Map<string, ParentVirtualField[]>,
 ): Promise<void> {
 	const lines = (await readFile(filePath, "utf-8")).split("\n");
 
@@ -23,8 +23,8 @@ export async function extractMainInterface(
 				body.push(
 					line.replace(
 						/^(export interface )T\w+(\s*\{)/,
-						`$1${interfaceName}$2`
-					)
+						`$1${interfaceName}$2`,
+					),
 				);
 				if (braceDepth <= 0) break;
 			}
@@ -62,10 +62,10 @@ export async function extractMainInterface(
 		.map((type) => `import type { ${type} } from "./${type}";`)
 		.join("\n");
 
-	const bodyStr = body.join("\n").trimEnd() + "\n";
+	const bodyStr = `${body.join("\n").trimEnd()}\n`;
 	await writeFile(
 		filePath,
 		importLines ? `${importLines}\n\n${bodyStr}` : bodyStr,
-		"utf-8"
+		"utf-8",
 	);
 }

@@ -34,8 +34,9 @@ const getNodeEnv = (): string => process.env.NODE_ENV ?? "development";
 const isProduction = (): boolean => getNodeEnv() === "production";
 
 const resolveLogLevel = (): LogLevel => {
-	const env = getNodeEnv() as keyof typeof LOG_LEVELS;
-	return LOG_LEVELS[env] ?? LOG_LEVELS.development;
+	const env = getNodeEnv();
+	const levels = LOG_LEVELS as Record<string, LogLevel>;
+	return levels[env] ?? LOG_LEVELS.development;
 };
 
 // Transport builders

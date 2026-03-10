@@ -1,11 +1,11 @@
+import fastify, { type FastifyInstance } from "fastify";
+import {
+	serializerCompiler,
+	validatorCompiler,
+} from "fastify-type-provider-zod";
 import { preparaFaturaRoutes } from "@/routes/prepara-fatura";
 import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
 import { errorHandler } from "@/shared/error-handler";
-import fastify, { type FastifyInstance } from "fastify";
-import {
-    serializerCompiler,
-    validatorCompiler,
-} from "fastify-type-provider-zod";
 
 jest.mock("@/modules/invoice-service/invoice.service", () => {
 	const mockCalculate = jest.fn();
@@ -21,11 +21,11 @@ const getMockCalculate = () => {
 };
 
 import {
-    BusinessRuleError,
-    DocumentValidationError,
-    EntityValidationError,
-    ExternalApiError,
-    NotFoundError,
+	BusinessRuleError,
+	DocumentValidationError,
+	EntityValidationError,
+	ExternalApiError,
+	NotFoundError,
 } from "@/shared/base.error";
 
 const buildTestServer = async (): Promise<FastifyInstance> => {

@@ -1,4 +1,4 @@
-import { CollectionInput } from "./types.mts";
+import type { CollectionInput } from "./types.mts";
 
 export const COLLECTIONS: CollectionInput[] = [
 	{
@@ -52,6 +52,8 @@ export function getCollectionByName(name: string): CollectionInput | undefined {
 	return COLLECTIONS.find((c) => c.name === name);
 }
 
-export function getCollectionByCollection(collection: string): CollectionInput | undefined {
+export function getCollectionByCollection(
+	collection: string,
+): CollectionInput | undefined {
 	return COLLECTIONS.find((c) => c.collection === collection);
 }

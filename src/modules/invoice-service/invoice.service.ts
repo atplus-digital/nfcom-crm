@@ -1,6 +1,6 @@
 import { AtacadoDataService } from "./atacado-data.service";
-import type { InvoiceCalculatorService } from "./invoice-calculator";
-import { InvoiceCalculator } from "./invoice-calculator";
+import type { InvoiceCalculatorService } from "./invoice-calculator/interface";
+import { InvoiceCalculator } from "./invoice-calculator/invoice-calculator";
 import type { InvoiceDataService } from "./invoice-data.service.types";
 
 function createInvoiceService(
@@ -11,11 +11,6 @@ function createInvoiceService(
 
 const invoiceService = createInvoiceService(new AtacadoDataService());
 
-export {
-	AtacadoDataService,
-	createInvoiceService,
-	InvoiceCalculator,
-	invoiceService,
-};
+export { createInvoiceService, invoiceService };
 
 export type { InvoiceCalculatorService, InvoiceDataService };

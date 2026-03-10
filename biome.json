@@ -1,26 +1,19 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
 	"vcs": {
-		"enabled": false,
+		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": false
+		"useIgnoreFile": true
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": [
-			"**/src/**/*",
-			"**/.vscode/**/*",
-			"**/index.html",
-			"**/vite.config.ts",
-			"!**/src/routeTree.gen.ts",
-			"!**/src/styles.css",
-			"!**/node_modules/**/*",
-			"!**/dist/**/*",
-			"!**/coverage/**/*",
-			"!**/build/**/*",
-			"!**/.git/**/*",
-			"!**/.cache/**/*",
-			"!**/.vscode/**/*"
+		"includes": ["src/**/*", "test/**/*", "scripts/**/*"],
+		"experimentalScannerIgnores": [
+			"node_modules",
+			"dist",
+			"coverage",
+			"build",
+			"generated"
 		]
 	},
 	"formatter": {

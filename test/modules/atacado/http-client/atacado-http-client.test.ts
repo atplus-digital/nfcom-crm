@@ -31,8 +31,8 @@ jest.mock("@/modules/atacado-repository/http-client/utils", () => ({
 }));
 
 import {
-    ATACADO_ROUTES,
-    atacadoHttpClient,
+	ATACADO_ROUTES,
+	atacadoHttpClient,
 } from "@/modules/atacado-repository/http-client/atacado-http-client";
 
 describe("AtacadoHttpClient", () => {

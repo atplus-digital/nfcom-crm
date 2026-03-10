@@ -67,7 +67,7 @@ const documentValidator = {
 	},
 
 	validateAll(partner: Parceiro, clients: readonly Cliente[]): void {
-		runValidateAll<Parceiro, Cliente, DocumentError>({
+		runValidateAll<DocumentError>({
 			partner,
 			clients,
 			validatePartner: (p) => this.validatePartner(p),
