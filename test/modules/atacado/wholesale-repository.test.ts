@@ -8,7 +8,7 @@ jest.mock("@/env", () => ({
 const mockGet = jest.fn();
 const mockPost = jest.fn();
 
-jest.mock("@/modules/atacado/http-client/atacado-http-client", () => ({
+jest.mock("@/modules/atacado-repository/http-client/atacado-http-client", () => ({
 	atacadoHttpClient: { get: mockGet, post: mockPost },
 	ATACADO_ROUTES: {
 		parceiros: "/t_parceiros",
@@ -20,7 +20,7 @@ jest.mock("@/modules/atacado/http-client/atacado-http-client", () => ({
 	},
 }));
 
-import { atacadoRepository } from "@/modules/atacado/wholesale.repository";
+import { atacadoRepository } from "@/modules/atacado-repository/wholesale.repository";
 import { NotFoundError } from "@/shared/base.error";
 
 describe("AtacadoApiRepository", () => {

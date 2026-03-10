@@ -25,15 +25,15 @@ jest.mock("@/env", () => ({
 	},
 }));
 
-jest.mock("@/modules/atacado/http-client/utils", () => ({
-	...jest.requireActual("@/modules/atacado/http-client/utils"),
+jest.mock("@/modules/atacado-repository/http-client/utils", () => ({
+	...jest.requireActual("@/modules/atacado-repository/http-client/utils"),
 	sleep: jest.fn().mockResolvedValue(undefined),
 }));
 
 import {
-	ATACADO_ROUTES,
-	atacadoHttpClient,
-} from "@/modules/atacado/http-client/atacado-http-client";
+    ATACADO_ROUTES,
+    atacadoHttpClient,
+} from "@/modules/atacado-repository/http-client/atacado-http-client";
 
 describe("AtacadoHttpClient", () => {
 	beforeEach(() => {

@@ -1,4 +1,4 @@
-import { ATACADO_ROUTES } from "@/modules/atacado/http-client/atacado.routes";
+import { ATACADO_ROUTES } from "@/modules/atacado-repository/http-client/atacado.routes";
 
 describe("atacado.routes", () => {
 	it("deve ter as rotas corretas", () => {

@@ -9,7 +9,7 @@ const mockFindParceiroById = jest.fn();
 const mockFindClientesAtivos = jest.fn();
 const mockFindAllPlanos = jest.fn();
 
-jest.mock("@/modules/atacado/wholesale.repository", () => ({
+jest.mock("@/modules/atacado-repository/wholesale.repository", () => ({
 	atacadoRepository: {
 		findParceiroById: mockFindParceiroById,
 		findClientesAtivosByParceiroId: mockFindClientesAtivos,

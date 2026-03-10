@@ -1,4 +1,4 @@
-import { atacadoRepository } from "@/modules/atacado/wholesale.repository";
+import { atacadoRepository } from "@/modules/atacado-repository/wholesale.repository";
 import type { InvoiceDataService } from "./invoice.service.types";
 import { InvoiceCalculator } from "./invoice-calculator";
 

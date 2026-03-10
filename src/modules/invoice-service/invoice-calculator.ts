@@ -10,9 +10,9 @@ import { LineProcessor } from "./domain/line-processor";
 import { createPartnerInvoice } from "./domain/partner-builder";
 import { DATES } from "./invoice.constants";
 import type {
-    CalculateInvoiceParams,
-    ClientDetail,
-    InvoicePartner,
+	CalculateInvoiceParams,
+	ClientDetail,
+	InvoicePartner,
 } from "./invoice.schemas";
 import type { InvoiceDataService } from "./invoice.service.types";
 
