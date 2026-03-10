@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
+import type { AtacadoRepository } from "@/modules/atacado-repository/wholesale.repository.types";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
-import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
 import {
 	BusinessRuleError,
 	DocumentValidationError,
@@ -11,7 +11,7 @@ import {
 } from "@/shared/base.error";
 import {
 	createCliente,
-	createMockDataService,
+	createMockRepository,
 	createParceiro,
 	createServico,
 	INVALID_CNPJ,
@@ -34,8 +34,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const parceiro = createParceiro();
 			parceiro.f_razao_social = "";
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -46,8 +46,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const parceiro = createParceiro();
 			parceiro.f_cep = "NaN";
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -58,8 +58,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const cliente = createCliente();
 			cliente.f_endereco = "";
 
-			const dataService = createMockDataService({ clients: [cliente] });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: [cliente] });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -71,8 +71,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				f_cidade: undefined,
 			} as unknown as Cliente);
 
-			const dataService = createMockDataService({ clients: [cliente] });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: [cliente] });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -85,8 +85,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const parceiro = createParceiro();
 			parceiro.f_cnpj = INVALID_CNPJ;
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -97,8 +97,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const cliente = createCliente();
 			cliente.f_cpf_cnpj = INVALID_CPF;
 
-			const dataService = createMockDataService({ clients: [cliente] });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: [cliente] });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -110,8 +110,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				f_cnpj: undefined,
 			} as unknown as Parceiro);
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -119,29 +119,41 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 		});
 	});
 
-	describe("falha do dataService", () => {
-		it("deve propagar ExternalApiError quando dataService falha", async () => {
-			const dataService: InvoiceDataService = {
-				fetchInvoiceData: jest
+	describe("falha do repository", () => {
+		it("deve propagar ExternalApiError quando repository falha", async () => {
+			const repository: AtacadoRepository = {
+				findParceiroById: jest
 					.fn()
 					.mockRejectedValue(
 						ExternalApiError.create("Atacado", "Connection refused"),
 					),
+				findClientesAtivosByParceiroId: jest.fn(),
+				findAllPlanosDeServico: jest.fn(),
+				createFatura: jest.fn(),
+				createCobranca: jest.fn(),
+				createNFCom: jest.fn(),
+				createItemNFCom: jest.fn(),
 			};
-			const calculator = new InvoiceCalculator(dataService);
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
 			).rejects.toThrow(ExternalApiError);
 		});
 
-		it("deve propagar erro genérico quando dataService lança erro inesperado", async () => {
-			const dataService: InvoiceDataService = {
-				fetchInvoiceData: jest
+		it("deve propagar erro genérico quando repository lança erro inesperado", async () => {
+			const repository: AtacadoRepository = {
+				findParceiroById: jest
 					.fn()
 					.mockRejectedValue(new Error("Unexpected crash")),
+				findClientesAtivosByParceiroId: jest.fn(),
+				findAllPlanosDeServico: jest.fn(),
+				createFatura: jest.fn(),
+				createCobranca: jest.fn(),
+				createNFCom: jest.fn(),
+				createItemNFCom: jest.fn(),
 			};
-			const calculator = new InvoiceCalculator(dataService);
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -168,8 +180,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				}),
 			];
 
-			const dataService = createMockDataService({ clients: clientes });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: clientes });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -190,8 +202,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				}),
 			];
 
-			const dataService = createMockDataService({ clients: clientes });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: clientes });
+			const calculator = new InvoiceCalculator(repository);
 
 			await expect(
 				calculator.calculate({ partnerId: 1, referenceDate: "2025-01-01" }),
@@ -205,8 +217,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				{ id: 4, f_nome: "Plano Teste", f_assinatura_mensal: "15.50" },
 			];
 
-			const dataService = createMockDataService({ plans: planos });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ plans: planos });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -225,8 +237,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				},
 			];
 
-			const dataService = createMockDataService({ plans: planos });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ plans: planos });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -247,8 +259,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				}),
 			);
 
-			const dataService = createMockDataService({ clients: clientes });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: clientes });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -267,8 +279,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const parceiro = createParceiro();
 			parceiro.f_data_vencimento = 31;
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -283,8 +295,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 			const parceiro = createParceiro();
 			parceiro.f_data_vencimento = 29;
 
-			const dataService = createMockDataService({ partner: parceiro });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ partner: parceiro });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -311,8 +323,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				}),
 			];
 
-			const dataService = createMockDataService({ clients: clientes });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: clientes });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,
@@ -336,8 +348,8 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				}),
 			];
 
-			const dataService = createMockDataService({ clients: clientes });
-			const calculator = new InvoiceCalculator(dataService);
+			const repository = createMockRepository({ clients: clientes });
+			const calculator = new InvoiceCalculator(repository);
 
 			const result = await calculator.calculate({
 				partnerId: 1,

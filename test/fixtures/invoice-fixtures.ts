@@ -2,7 +2,7 @@ import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { Servico } from "@/@types/atacado/Servico";
-import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
+import type { AtacadoRepository } from "@/modules/atacado-repository/wholesale.repository.types";
 
 export const VALID_CNPJ = "11222333000181";
 export const VALID_CPF = "52998224725";
@@ -49,16 +49,24 @@ export const DEFAULT_PLANOS: PlanoDeServico[] = [
 	{ id: 5, f_nome: "1 Linha - 2 Canais", f_assinatura_mensal: "5" },
 ];
 
-export const createMockDataService = (
+export const createMockRepository = (
 	overrides?: Partial<{
 		partner: Parceiro;
 		clients: Cliente[];
 		plans: PlanoDeServico[];
 	}>,
-): InvoiceDataService => ({
-	fetchInvoiceData: jest.fn().mockResolvedValue({
-		partner: overrides?.partner ?? createParceiro(),
-		clients: overrides?.clients ?? [createCliente()],
-		plans: overrides?.plans ?? DEFAULT_PLANOS,
-	}),
+): AtacadoRepository => ({
+	findParceiroById: jest
+		.fn()
+		.mockResolvedValue(overrides?.partner ?? createParceiro()),
+	findClientesAtivosByParceiroId: jest
+		.fn()
+		.mockResolvedValue(overrides?.clients ?? [createCliente()]),
+	findAllPlanosDeServico: jest
+		.fn()
+		.mockResolvedValue(overrides?.plans ?? DEFAULT_PLANOS),
+	createFatura: jest.fn(),
+	createCobranca: jest.fn(),
+	createNFCom: jest.fn(),
+	createItemNFCom: jest.fn(),
 });

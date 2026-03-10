@@ -83,6 +83,10 @@ export interface CalculateInvoiceParams {
 	readonly billingType?: TipoFaturamento;
 }
 
+export type BillingTypeConfig = {
+	allowsDirectClientBilling: boolean;
+};
+
 export {
 	TipoFaturamentoEnum,
 	ProcessedLineSchema,

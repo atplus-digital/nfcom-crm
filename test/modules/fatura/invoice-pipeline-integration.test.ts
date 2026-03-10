@@ -1,8 +1,8 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
+import type { AtacadoRepository } from "@/modules/atacado-repository/wholesale.repository.types";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
-import type { InvoiceDataService } from "@/modules/invoice-service/invoice-data.service.types";
 import {
 	BusinessRuleError,
 	DocumentValidationError,
@@ -21,12 +21,18 @@ const planos: PlanoDeServico[] = [
 	{ id: 4, f_nome: "Enterprise - 10 Canais", f_assinatura_mensal: "100" },
 ];
 
-const createDataService = (
+const createMockRepository = (
 	partner: Parceiro,
 	clients: Cliente[],
 	plans: PlanoDeServico[] = planos,
-): InvoiceDataService => ({
-	fetchInvoiceData: jest.fn().mockResolvedValue({ partner, clients, plans }),
+): AtacadoRepository => ({
+	findParceiroById: jest.fn().mockResolvedValue(partner),
+	findClientesAtivosByParceiroId: jest.fn().mockResolvedValue(clients),
+	findAllPlanosDeServico: jest.fn().mockResolvedValue(plans),
+	createFatura: jest.fn(),
+	createCobranca: jest.fn(),
+	createNFCom: jest.fn(),
+	createItemNFCom: jest.fn(),
 });
 
 describe("Pipeline de integração: Calculator + Validators + Processor + Builders", () => {
@@ -71,7 +77,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 				f_data_vencimento: 20,
 			});
 			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
+				createMockRepository(parceiro, clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -123,7 +129,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -169,7 +175,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -194,7 +200,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			await expect(
@@ -212,7 +218,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			const clientes = [createCliente()];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
+				createMockRepository(parceiro, clientes),
 			);
 
 			await expect(
@@ -227,7 +233,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			await expect(
@@ -242,7 +248,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			await expect(
@@ -257,7 +263,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			const clientes = [createCliente()];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
+				createMockRepository(parceiro, clientes),
 			);
 
 			await expect(
@@ -272,7 +278,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			await expect(
@@ -295,7 +301,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			await expect(
@@ -316,7 +322,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -347,7 +353,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -379,7 +385,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -408,7 +414,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -433,7 +439,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(createParceiro(), clientes),
+				createMockRepository(createParceiro(), clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -453,7 +459,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			const clientes = [createCliente()];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
+				createMockRepository(parceiro, clientes),
 			);
 
 			const result = await calculator.calculate({
@@ -471,7 +477,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 			const clientes = [createCliente()];
 
 			const calculator = new InvoiceCalculator(
-				createDataService(parceiro, clientes),
+				createMockRepository(parceiro, clientes),
 			);
 
 			const result = await calculator.calculate({

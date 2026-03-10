@@ -1,6 +1,7 @@
 import type { Cliente } from "@/@types/atacado/Cliente";
 import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
+import type { AtacadoRepository } from "@/modules/atacado-repository/wholesale.repository.types";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
 import { DATES } from "../invoice.constants";
 import type {
@@ -8,7 +9,6 @@ import type {
 	ClientDetail,
 	InvoicePartner,
 } from "../invoice.schemas";
-import type { InvoiceDataService } from "../invoice-data.service.types";
 import { createClientDetail } from "./domain/client-builder";
 import { calculateDueDate } from "./domain/date-calculator";
 import { LineProcessor } from "./domain/line-processor";
@@ -17,18 +17,24 @@ import { documentValidator } from "./validators/document.validator";
 import { entityValidator } from "./validators/entity.validator";
 
 export class InvoiceCalculator {
-	private readonly dataService: InvoiceDataService;
+	private readonly repository: AtacadoRepository;
 
-	constructor(dataService: InvoiceDataService) {
-		this.dataService = dataService;
+	constructor(repository: AtacadoRepository) {
+		this.repository = repository;
 	}
 
 	async calculate({
 		partnerId,
 		referenceDate,
 	}: CalculateInvoiceParams): Promise<InvoicePartner> {
-		const { partner, clients, plans } =
-			await this.dataService.fetchInvoiceData(partnerId);
+		const [partner, clients, plans] = await Promise.all([
+			this.repository.findParceiroById(partnerId),
+			this.repository.findClientesAtivosByParceiroId({
+				partnerId,
+				activeLineStatus: true,
+			}),
+			this.repository.findAllPlanosDeServico(),
+		]);
 
 		this.validateData(partner, clients, plans);
 

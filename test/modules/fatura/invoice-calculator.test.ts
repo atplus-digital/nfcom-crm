@@ -3,7 +3,7 @@ import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
 import {
 	createCliente,
-	createMockDataService,
+	createMockRepository,
 	createParceiro,
 	createServico,
 } from "../../fixtures/invoice-fixtures";
@@ -19,8 +19,8 @@ describe("InvoiceCalculator", () => {
 	});
 
 	it("deve calcular fatura com sucesso", async () => {
-		const dataService = createMockDataService();
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository();
+		const calculator = new InvoiceCalculator(repository);
 
 		const result = await calculator.calculate({
 			partnerId: 1,
@@ -47,8 +47,8 @@ describe("InvoiceCalculator", () => {
 			}),
 		];
 
-		const dataService = createMockDataService({ clients: clientes });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ clients: clientes });
+		const calculator = new InvoiceCalculator(repository);
 
 		const result = await calculator.calculate({
 			partnerId: 1,
@@ -62,8 +62,8 @@ describe("InvoiceCalculator", () => {
 	});
 
 	it("deve lançar NotFoundError quando não há clientes", async () => {
-		const dataService = createMockDataService({ clients: [] });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ clients: [] });
+		const calculator = new InvoiceCalculator(repository);
 
 		await expect(
 			calculator.calculate({
@@ -74,8 +74,8 @@ describe("InvoiceCalculator", () => {
 	});
 
 	it("deve lançar NotFoundError quando não há planos", async () => {
-		const dataService = createMockDataService({ plans: [] });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ plans: [] });
+		const calculator = new InvoiceCalculator(repository);
 
 		await expect(
 			calculator.calculate({
@@ -93,8 +93,8 @@ describe("InvoiceCalculator", () => {
 			}),
 		];
 
-		const dataService = createMockDataService({ clients: clientes });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ clients: clientes });
+		const calculator = new InvoiceCalculator(repository);
 
 		await expect(
 			calculator.calculate({
@@ -108,8 +108,8 @@ describe("InvoiceCalculator", () => {
 		const parceiro = createParceiro({
 			f_data_vencimento: undefined,
 		} as unknown as Parceiro);
-		const dataService = createMockDataService({ partner: parceiro });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ partner: parceiro });
+		const calculator = new InvoiceCalculator(repository);
 
 		const result = await calculator.calculate({
 			partnerId: 1,
@@ -134,8 +134,8 @@ describe("InvoiceCalculator", () => {
 			}),
 		];
 
-		const dataService = createMockDataService({ clients: clientes });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ clients: clientes });
+		const calculator = new InvoiceCalculator(repository);
 
 		const result = await calculator.calculate({
 			partnerId: 1,
@@ -161,8 +161,8 @@ describe("InvoiceCalculator", () => {
 			}),
 		];
 
-		const dataService = createMockDataService({ clients: clientes });
-		const calculator = new InvoiceCalculator(dataService);
+		const repository = createMockRepository({ clients: clientes });
+		const calculator = new InvoiceCalculator(repository);
 
 		await expect(
 			calculator.calculate({
@@ -172,15 +172,19 @@ describe("InvoiceCalculator", () => {
 		).rejects.toThrow(BusinessRuleError);
 	});
 
-	it("deve chamar dataService.fetchInvoiceData com partnerId correto", async () => {
-		const dataService = createMockDataService();
-		const calculator = new InvoiceCalculator(dataService);
+	it("deve chamar métodos do repository com partnerId correto", async () => {
+		const repository = createMockRepository();
+		const calculator = new InvoiceCalculator(repository);
 
 		await calculator.calculate({
 			partnerId: 42,
 			referenceDate: "2025-01-01",
 		});
 
-		expect(dataService.fetchInvoiceData).toHaveBeenCalledWith(42);
+		expect(repository.findParceiroById).toHaveBeenCalledWith(42);
+		expect(repository.findClientesAtivosByParceiroId).toHaveBeenCalledWith({
+			partnerId: 42,
+			activeLineStatus: true,
+		});
 	});
 });
