@@ -66,6 +66,15 @@ class AtacadoHttpClient {
 			this.client.post<ApiResponse<T>>(route, data, config).then((r) => r.data),
 		);
 	}
+
+	async delete(
+		route: AtacadoRouteWithSuffix,
+		config?: AxiosRequestConfig,
+	): Promise<void> {
+		return this.executeWithRetry(() =>
+			this.client.delete(route, config).then(() => undefined),
+		);
+	}
 }
 
 const createAtacadoHttpClient = (): AtacadoHttpClient =>

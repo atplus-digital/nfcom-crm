@@ -10,7 +10,7 @@ const preparaFaturaRoutes: FastifyPluginAsync = async (server) => {
 		schema: {
 			body: preparaFaturaSchema,
 			response: {
-				200: preparaFaturaResponseSchema,
+				201: preparaFaturaResponseSchema,
 			},
 		},
 		handler: prepareInvoiceHandler,

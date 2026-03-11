@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { invoiceService } from "@/modules/invoice-service/invoice.service";
 import { formatToISODate } from "@/modules/invoice-service/invoice-calculator/domain/date-calculator";
+import { HTTP_STATUS } from "@/shared/constants";
 
 import type {
 	PreparaFaturaBody,
@@ -15,22 +16,22 @@ const prepareInvoiceHandler = async (
 
 	const dateStr = formatToISODate(f_data_referencia);
 
-	const invoice = await invoiceService.calculate({
+	const persistedInvoice = await invoiceService.calculateAndPersist({
 		partnerId: f_parceiro,
 		referenceDate: dateStr,
 		billingType: f_tipo_de_faturamento,
 	});
 
 	const response: PrepareInvoiceResponse = {
-		status: 200,
+		status: HTTP_STATUS.CREATED,
 		success: true,
 		dateStr,
-		date: f_data_referencia,
 		billingType: f_tipo_de_faturamento,
-		data: invoice,
+		resumo: persistedInvoice.resumo,
+		data: persistedInvoice.data,
 	};
 
-	return reply.status(200).send(response);
+	return reply.status(HTTP_STATUS.CREATED).send(response);
 };
 
 export { prepareInvoiceHandler };

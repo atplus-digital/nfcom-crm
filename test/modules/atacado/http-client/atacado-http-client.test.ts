@@ -3,6 +3,7 @@ import { ExternalApiError } from "@/shared/base.error";
 const mockAxiosInstance = {
 	get: jest.fn(),
 	post: jest.fn(),
+	delete: jest.fn(),
 };
 
 const mockCreate = jest.fn().mockReturnValue(mockAxiosInstance);
@@ -39,6 +40,7 @@ describe("AtacadoHttpClient", () => {
 	beforeEach(() => {
 		mockAxiosInstance.get.mockReset();
 		mockAxiosInstance.post.mockReset();
+		mockAxiosInstance.delete.mockReset();
 		mockIsAxiosError.mockReset();
 	});
 
@@ -172,6 +174,20 @@ describe("AtacadoHttpClient", () => {
 
 			expect(result).toEqual(responseData);
 			expect(mockAxiosInstance.post).toHaveBeenCalledTimes(2);
+		});
+	});
+
+	describe("delete", () => {
+		it("deve executar delete com sucesso", async () => {
+			mockAxiosInstance.delete.mockResolvedValue({ data: {} });
+
+			await expect(
+				atacadoHttpClient.delete("/t_nfcom_faturas/1:destroy"),
+			).resolves.toBeUndefined();
+			expect(mockAxiosInstance.delete).toHaveBeenCalledWith(
+				"/t_nfcom_faturas/1:destroy",
+				undefined,
+			);
 		});
 	});
 });

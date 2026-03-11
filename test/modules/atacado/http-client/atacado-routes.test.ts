@@ -8,5 +8,6 @@ describe("atacado.routes", () => {
 		expect(ATACADO_ROUTES.faturas).toBe("/t_nfcom_faturas");
 		expect(ATACADO_ROUTES.cobrancas).toBe("/t_nfcom_cobrancas");
 		expect(ATACADO_ROUTES.notasFiscais).toBe("/t_nfcom_notas");
+		expect(ATACADO_ROUTES.itensNFCom).toBe("/t_nfcom_itens");
 	});
 });

@@ -1,5 +1,9 @@
 # PRD: Análise e Revisão do Projeto NFCom-CRM
 
+## Rules
+
+- Work in commits
+
 ## Introdução
 
 Este documento apresenta uma análise completa do projeto **NFCom-CRM**, focando exclusivamente na **Etapa 1: Preparação da Fatura** - o cálculo e preparação dos dados de faturamento para validação no CRM.

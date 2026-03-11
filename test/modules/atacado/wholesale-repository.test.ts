@@ -7,11 +7,12 @@ jest.mock("@/env", () => ({
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
+const mockDelete = jest.fn();
 
 jest.mock(
 	"@/modules/atacado-repository/http-client/atacado-http-client",
 	() => ({
-		atacadoHttpClient: { get: mockGet, post: mockPost },
+		atacadoHttpClient: { get: mockGet, post: mockPost, delete: mockDelete },
 		ATACADO_ROUTES: {
 			parceiros: "/t_parceiros",
 			clientes: "/t_clientes",
@@ -19,6 +20,7 @@ jest.mock(
 			faturas: "/t_nfcom_faturas",
 			cobrancas: "/t_nfcom_cobrancas",
 			notasFiscais: "/t_nfcom_notas",
+			itensNFCom: "/t_nfcom_itens",
 		},
 	}),
 );
@@ -247,6 +249,53 @@ describe("AtacadoApiRepository", () => {
 				"/t_nfcom_notas/10/f_nota_itens:create",
 				input,
 			);
+		});
+
+		it("deve aplicar defaults de cfop e cclass quando vazios", async () => {
+			const item = { id: 1 };
+			mockPost.mockResolvedValue({ data: item });
+
+			const input = {
+				f_item: 1,
+				f_descricao: "Item sem classificação definida",
+				f_cclass: "",
+				f_cfop: "",
+				f_quantidade: 1,
+				f_unitario: "100.00",
+				f_total: "100.00",
+			};
+			await atacadoRepository.createItemNFCom(10, input);
+
+			expect(mockPost).toHaveBeenCalledWith(
+				"/t_nfcom_notas/10/f_nota_itens:create",
+				{
+					...input,
+					f_cclass: "0",
+					f_cfop: "0",
+				},
+			);
+		});
+	});
+
+	describe("delete methods", () => {
+		it("deve deletar fatura", async () => {
+			await atacadoRepository.deleteFatura(10);
+			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_faturas/10:destroy");
+		});
+
+		it("deve deletar cobrança", async () => {
+			await atacadoRepository.deleteCobranca(20);
+			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_cobrancas/20:destroy");
+		});
+
+		it("deve deletar NFCom", async () => {
+			await atacadoRepository.deleteNFCom(30);
+			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_notas/30:destroy");
+		});
+
+		it("deve deletar item de NFCom", async () => {
+			await atacadoRepository.deleteItemNFCom(40);
+			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_itens/40:destroy");
 		});
 	});
 });

@@ -33,6 +33,10 @@ const createMockRepository = (
 	createCobranca: jest.fn(),
 	createNFCom: jest.fn(),
 	createItemNFCom: jest.fn(),
+	deleteFatura: jest.fn(),
+	deleteCobranca: jest.fn(),
+	deleteNFCom: jest.fn(),
+	deleteItemNFCom: jest.fn(),
 });
 
 describe("Pipeline de integração: Calculator + Validators + Processor + Builders", () => {
@@ -244,7 +248,7 @@ describe("Pipeline de integração: Calculator + Validators + Processor + Builde
 		it("deve falhar quando segundo cliente tem CPF/CNPJ vazio", async () => {
 			const clientes = [
 				createCliente({ id: 10 }),
-				createCliente({ id: 20, f_cpf_cnpj: undefined } as unknown as Cliente),
+				createCliente({ id: 20, f_cpf_cnpj: undefined }),
 			];
 
 			const calculator = new InvoiceCalculator(

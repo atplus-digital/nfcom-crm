@@ -8,16 +8,16 @@ import { ERROR_CODES, HTTP_STATUS } from "@/shared/constants";
 import { errorHandler } from "@/shared/error-handler";
 
 jest.mock("@/modules/invoice-service/invoice.service", () => {
-	const mockCalculate = jest.fn();
+	const mockCalculateAndPersist = jest.fn();
 	return {
-		invoiceService: { calculate: mockCalculate },
-		__mockCalculate: mockCalculate,
+		invoiceService: { calculateAndPersist: mockCalculateAndPersist },
+		__mockCalculateAndPersist: mockCalculateAndPersist,
 	};
 });
 
-const getMockCalculate = () => {
+const getMockCalculateAndPersist = () => {
 	const mod = jest.requireMock("@/modules/invoice-service/invoice.service");
-	return mod.__mockCalculate as jest.Mock;
+	return mod.__mockCalculateAndPersist as jest.Mock;
 };
 
 import {
@@ -45,83 +45,53 @@ const validBody = {
 };
 
 const validInvoiceResult = {
-	dueDate: "2025-02-10",
-	invoiceTotal: 30,
-	totalLines: 5,
-	partner: {
-		partner: {
-			id: 1,
-			f_razao_social: "Empresa Teste",
-			f_cnpj: "11222333000181",
-		},
-		invoiceTotal: 30,
-		totalClients: 2,
-		totalLines: 5,
+	dateStr: "2025-01-15",
+	billingType: "parceiro",
+	resumo: {
+		totalClientes: 2,
+		totalLinhas: 5,
+		valorTotal: 30,
 	},
-	clients: [
-		{
-			client: { id: 10, f_nome_razao: "Cliente 1" },
-			total: 15,
-			totalLines: 3,
-			lines: [
-				{ id: 1, planId: 4, unitPrice: 5, description: "Plano A" },
-				{ id: 2, planId: 4, unitPrice: 5, description: "Plano A" },
-				{ id: 3, planId: 4, unitPrice: 5, description: "Plano A" },
-			],
-			groupedLines: [
-				{
-					id: 1,
-					planId: 4,
-					unitPrice: 5,
-					description: "Plano A",
-					quantity: 3,
-					total: 15,
-				},
-			],
+	data: {
+		fatura: {
+			id: 91,
+			f_status: "criada",
+			f_data_referencia: "2025-01-15",
+			f_data_vencimento: "2025-02-10",
+			f_valor_total: "30.00",
+			f_tipo_de_faturamento: "parceiro",
 		},
-		{
-			client: { id: 20, f_nome_razao: "Cliente 2" },
-			total: 15,
-			totalLines: 2,
-			lines: [
-				{ id: 4, planId: 5, unitPrice: 7.5, description: "Plano B" },
-				{ id: 5, planId: 5, unitPrice: 7.5, description: "Plano B" },
-			],
-			groupedLines: [
-				{
-					id: 4,
-					planId: 5,
-					unitPrice: 7.5,
-					description: "Plano B",
-					quantity: 2,
-					total: 15,
-				},
-			],
-		},
-	],
-	groupedServices: [
-		{ planId: 4, description: "Plano A", unitPrice: 5, quantity: 3, total: 15 },
-		{
-			planId: 5,
-			description: "Plano B",
-			unitPrice: 7.5,
-			quantity: 2,
-			total: 15,
-		},
-	],
+		cobrancas: [
+			{
+				id: 11,
+				f_valor_total: "30.00",
+				f_nome_devedor: "Empresa Teste",
+				f_status: "a-emitir",
+			},
+		],
+		notasFiscais: [
+			{
+				id: 21,
+				f_nome: "Empresa Teste",
+				f_cpfcnpj: "11222333000181",
+				f_status_interno: "a-emitir",
+				f_fk_cobranca: 11,
+			},
+		],
+	},
 };
 
 describe("POST /prepara-fatura - integração rota + controller + error handler", () => {
 	let server: FastifyInstance;
-	let mockCalculate: jest.Mock;
+	let mockCalculateAndPersist: jest.Mock;
 
 	beforeAll(async () => {
 		server = await buildTestServer();
 	});
 
 	beforeEach(() => {
-		mockCalculate = getMockCalculate();
-		mockCalculate.mockReset();
+		mockCalculateAndPersist = getMockCalculateAndPersist();
+		mockCalculateAndPersist.mockReset();
 	});
 
 	afterAll(async () => {
@@ -129,8 +99,8 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 	});
 
 	describe("cenários de sucesso", () => {
-		it("deve retornar 200 com invoice completa", async () => {
-			mockCalculate.mockResolvedValue(validInvoiceResult);
+		it("deve retornar 201 com fluxo persistido", async () => {
+			mockCalculateAndPersist.mockResolvedValue(validInvoiceResult);
 
 			const response = await server.inject({
 				method: "POST",
@@ -138,17 +108,17 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 				payload: validBody,
 			});
 
-			expect(response.statusCode).toBe(HTTP_STATUS.OK);
+			expect(response.statusCode).toBe(HTTP_STATUS.CREATED);
 
 			const body = response.json();
 			expect(body.success).toBe(true);
-			expect(body.data.invoiceTotal).toBe(30);
-			expect(body.data.clients).toHaveLength(2);
-			expect(body.data.groupedServices).toHaveLength(2);
+			expect(body.resumo.valorTotal).toBe(30);
+			expect(body.data.cobrancas).toHaveLength(1);
+			expect(body.data.notasFiscais).toHaveLength(1);
 		});
 
-		it("deve chamar calculate com parâmetros corretos", async () => {
-			mockCalculate.mockResolvedValue(validInvoiceResult);
+		it("deve chamar calculateAndPersist com parâmetros corretos", async () => {
+			mockCalculateAndPersist.mockResolvedValue(validInvoiceResult);
 
 			await server.inject({
 				method: "POST",
@@ -156,7 +126,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 				payload: validBody,
 			});
 
-			expect(mockCalculate).toHaveBeenCalledWith(
+			expect(mockCalculateAndPersist).toHaveBeenCalledWith(
 				expect.objectContaining({
 					partnerId: 1,
 					referenceDate: expect.any(String),
@@ -166,7 +136,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve aceitar todos os tipos de faturamento válidos", async () => {
-			mockCalculate.mockResolvedValue(validInvoiceResult);
+			mockCalculateAndPersist.mockResolvedValue(validInvoiceResult);
 
 			const tipos = [
 				"parceiro",
@@ -181,7 +151,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 					url: "/prepara-fatura",
 					payload: { ...validBody, f_tipo_de_faturamento: tipo },
 				});
-				expect(response.statusCode).toBe(HTTP_STATUS.OK);
+				expect(response.statusCode).toBe(HTTP_STATUS.CREATED);
 			}
 		});
 	});
@@ -284,7 +254,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve aceitar f_parceiro como float positivo (Zod z.number().positive() aceita)", async () => {
-			mockCalculate.mockResolvedValue(validInvoiceResult);
+			mockCalculateAndPersist.mockResolvedValue(validInvoiceResult);
 
 			const response = await server.inject({
 				method: "POST",
@@ -292,13 +262,15 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 				payload: { ...validBody, f_parceiro: 1.5 },
 			});
 
-			expect(response.statusCode).toBe(HTTP_STATUS.OK);
+			expect(response.statusCode).toBe(HTTP_STATUS.CREATED);
 		});
 	});
 
 	describe("propagação de erros de negócio", () => {
 		it("deve retornar 404 quando parceiro não é encontrado", async () => {
-			mockCalculate.mockRejectedValue(NotFoundError.create("Parceiro", 999));
+			mockCalculateAndPersist.mockRejectedValue(
+				NotFoundError.create("Parceiro", 999),
+			);
 
 			const response = await server.inject({
 				method: "POST",
@@ -314,7 +286,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve retornar 400 para EntityValidationError", async () => {
-			mockCalculate.mockRejectedValue(
+			mockCalculateAndPersist.mockRejectedValue(
 				EntityValidationError.create("Parceiro", 1, [
 					{ field: "f_cnpj", label: "CNPJ" },
 				]),
@@ -334,7 +306,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve retornar 400 para DocumentValidationError", async () => {
-			mockCalculate.mockRejectedValue(
+			mockCalculateAndPersist.mockRejectedValue(
 				DocumentValidationError.create("CNPJ do parceiro é inválido"),
 			);
 
@@ -352,7 +324,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve retornar 422 para BusinessRuleError", async () => {
-			mockCalculate.mockRejectedValue(
+			mockCalculateAndPersist.mockRejectedValue(
 				BusinessRuleError.create("Nenhum cliente com linhas ativas"),
 			);
 
@@ -370,7 +342,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve retornar 502 para ExternalApiError", async () => {
-			mockCalculate.mockRejectedValue(
+			mockCalculateAndPersist.mockRejectedValue(
 				ExternalApiError.create("Atacado", "Connection timeout"),
 			);
 
@@ -388,7 +360,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 		});
 
 		it("deve retornar 500 para erro genérico inesperado", async () => {
-			mockCalculate.mockRejectedValue(new Error("Crash inesperado"));
+			mockCalculateAndPersist.mockRejectedValue(new Error("Crash inesperado"));
 
 			const response = await server.inject({
 				method: "POST",
@@ -405,7 +377,7 @@ describe("POST /prepara-fatura - integração rota + controller + error handler"
 
 	describe("formato de resposta de erro", () => {
 		it("deve retornar formato padronizado para todos os erros de negócio", async () => {
-			mockCalculate.mockRejectedValue(
+			mockCalculateAndPersist.mockRejectedValue(
 				NotFoundError.create("Clientes ativos", 1),
 			);
 

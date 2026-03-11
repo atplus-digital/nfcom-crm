@@ -1,6 +1,7 @@
 import {
 	GroupedLineSchema,
 	GroupedServiceSchema,
+	InvoicePartnerSchema,
 	ProcessedLineSchema,
 	TipoFaturamentoEnum,
 } from "@/modules/invoice-service/invoice.schemas";
@@ -89,6 +90,97 @@ describe("fatura.schemas", () => {
 			};
 
 			expect(GroupedServiceSchema.safeParse(service).success).toBe(true);
+		});
+	});
+
+	describe("InvoicePartnerSchema", () => {
+		it("deve validar billingPlan com estrutura de parceiro", () => {
+			const parsed = InvoicePartnerSchema.safeParse({
+				dueDate: "2025-02-10",
+				invoiceTotal: 30,
+				totalLines: 5,
+				partner: {
+					partner: {
+						id: 1,
+						f_razao_social: "Empresa",
+						f_cnpj: "11222333000181",
+					},
+					invoiceTotal: 30,
+					totalClients: 1,
+					totalLines: 5,
+				},
+				clients: [
+					{
+						client: {
+							id: 10,
+							f_nome_razao: "Cliente 1",
+							f_cpf_cnpj: "52998224725",
+						},
+						total: 30,
+						totalLines: 5,
+						lines: [{ id: 1, planId: 4, unitPrice: 6, description: "Plano" }],
+						groupedLines: [
+							{
+								id: 1,
+								planId: 4,
+								unitPrice: 6,
+								description: "Plano",
+								quantity: 5,
+								total: 30,
+							},
+						],
+					},
+				],
+				groupedServices: [
+					{
+						planId: 4,
+						description: "Plano",
+						unitPrice: 6,
+						quantity: 5,
+						total: 30,
+					},
+				],
+				billingPlan: {
+					billingType: "parceiro",
+					charges: [
+						{
+							chargeKey: "partner-charge",
+							total: 30,
+							debtor: {
+								type: "partner",
+								id: 1,
+								name: "Empresa",
+								document: "11222333000181",
+								email: "",
+							},
+							noteRecipients: [
+								{
+									recipient: {
+										type: "partner",
+										id: 1,
+										name: "Empresa",
+										document: "11222333000181",
+										email: "",
+									},
+									total: 30,
+									totalLines: 5,
+									items: [
+										{
+											planId: 4,
+											description: "Plano",
+											unitPrice: 6,
+											quantity: 5,
+											total: 30,
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			});
+
+			expect(parsed.success).toBe(true);
 		});
 	});
 });

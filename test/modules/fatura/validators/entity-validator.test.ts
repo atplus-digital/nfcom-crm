@@ -1,5 +1,3 @@
-import type { Cliente } from "@/@types/atacado/Cliente";
-import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { entityValidator } from "@/modules/invoice-service/invoice-calculator/validators/entity.validator";
 import { EntityValidationError } from "@/shared/base.error";
 
@@ -30,7 +28,7 @@ describe("entityValidator", () => {
 
 		it("deve retornar falha quando CNPJ é undefined", () => {
 			const result = entityValidator.validatePartner(
-				createParceiro({ f_cnpj: undefined } as unknown as Parceiro),
+				createParceiro({ f_cnpj: undefined }),
 			);
 
 			expect(result.success).toBe(false);
@@ -47,7 +45,7 @@ describe("entityValidator", () => {
 					f_razao_social: "",
 					f_cnpj: undefined,
 					f_endereco: "",
-				} as unknown as Parceiro),
+				}),
 			);
 
 			expect(result.success).toBe(false);
@@ -104,7 +102,7 @@ describe("entityValidator", () => {
 
 		it("deve retornar falha para CPF/CNPJ undefined", () => {
 			const result = entityValidator.validateClient(
-				createCliente({ f_cpf_cnpj: undefined } as unknown as Cliente),
+				createCliente({ f_cpf_cnpj: undefined }),
 			);
 
 			expect(result.success).toBe(false);
@@ -149,7 +147,7 @@ describe("entityValidator", () => {
 			const parceiro = createParceiro({
 				id: undefined,
 				f_razao_social: "",
-			} as unknown as Parceiro);
+			});
 
 			expect(() =>
 				entityValidator.validateAll(parceiro, [createCliente()]),
@@ -161,7 +159,7 @@ describe("entityValidator", () => {
 				createCliente({
 					id: undefined,
 					f_nome_razao: "",
-				} as unknown as Cliente),
+				}),
 			];
 
 			expect(() =>

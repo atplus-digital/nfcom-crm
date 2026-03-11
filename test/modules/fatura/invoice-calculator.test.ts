@@ -1,4 +1,3 @@
-import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
 import { BusinessRuleError, NotFoundError } from "@/shared/base.error";
 import {
@@ -107,7 +106,7 @@ describe("InvoiceCalculator", () => {
 	it("deve usar data de vencimento padrão quando parceiro não tem", async () => {
 		const parceiro = createParceiro({
 			f_data_vencimento: undefined,
-		} as unknown as Parceiro);
+		});
 		const repository = createMockRepository({ partner: parceiro });
 		const calculator = new InvoiceCalculator(repository);
 
@@ -185,6 +184,101 @@ describe("InvoiceCalculator", () => {
 		expect(repository.findClientesAtivosByParceiroId).toHaveBeenCalledWith({
 			partnerId: 42,
 			activeLineStatus: true,
+		});
+	});
+
+	describe("billingType na preparação para persistência", () => {
+		it("deve mapear parceiro com 1 cobrança e 1 destinatário parceiro", async () => {
+			const repository = createMockRepository();
+			const calculator = new InvoiceCalculator(repository);
+
+			const result = await calculator.calculate({
+				partnerId: 1,
+				referenceDate: "2025-01-01",
+				billingType: "parceiro",
+			});
+
+			expect(result.billingPlan.charges).toHaveLength(1);
+			expect(result.billingPlan.charges[0]?.debtor.type).toBe("partner");
+			expect(result.billingPlan.charges[0]?.noteRecipients).toHaveLength(1);
+			expect(
+				result.billingPlan.charges[0]?.noteRecipients[0]?.recipient.type,
+			).toBe("partner");
+		});
+
+		it("deve mapear via-parceiro com 1 cobrança do parceiro e notas por cliente", async () => {
+			const clients = [
+				createCliente({ id: 10, f_linhas_fixas: [createServico({ id: 1 })] }),
+				createCliente({ id: 20, f_linhas_fixas: [createServico({ id: 2 })] }),
+			];
+			const repository = createMockRepository({ clients });
+			const calculator = new InvoiceCalculator(repository);
+
+			const result = await calculator.calculate({
+				partnerId: 1,
+				referenceDate: "2025-01-01",
+				billingType: "via-parceiro",
+			});
+
+			expect(result.billingPlan.charges).toHaveLength(1);
+			expect(result.billingPlan.charges[0]?.debtor.type).toBe("partner");
+			expect(result.billingPlan.charges[0]?.noteRecipients).toHaveLength(2);
+			expect(
+				result.billingPlan.charges[0]?.noteRecipients.every(
+					(note) => note.recipient.type === "client",
+				),
+			).toBe(true);
+		});
+
+		it("deve mapear cofaturamento igual ao via-parceiro", async () => {
+			const clients = [
+				createCliente({ id: 30, f_linhas_fixas: [createServico({ id: 3 })] }),
+				createCliente({ id: 40, f_linhas_fixas: [createServico({ id: 4 })] }),
+			];
+			const repository = createMockRepository({ clients });
+			const calculator = new InvoiceCalculator(repository);
+
+			const result = await calculator.calculate({
+				partnerId: 1,
+				referenceDate: "2025-01-01",
+				billingType: "cofaturamento",
+			});
+
+			expect(result.billingPlan.charges).toHaveLength(1);
+			expect(result.billingPlan.charges[0]?.debtor.type).toBe("partner");
+			expect(result.billingPlan.charges[0]?.noteRecipients).toHaveLength(2);
+			expect(
+				result.billingPlan.charges[0]?.noteRecipients.every(
+					(note) => note.recipient.type === "client",
+				),
+			).toBe(true);
+		});
+
+		it("deve mapear cliente-final com cobranças e destinatários por cliente", async () => {
+			const clients = [
+				createCliente({ id: 50, f_linhas_fixas: [createServico({ id: 5 })] }),
+				createCliente({ id: 60, f_linhas_fixas: [createServico({ id: 6 })] }),
+			];
+			const repository = createMockRepository({ clients });
+			const calculator = new InvoiceCalculator(repository);
+
+			const result = await calculator.calculate({
+				partnerId: 1,
+				referenceDate: "2025-01-01",
+				billingType: "cliente-final",
+			});
+
+			expect(result.billingPlan.charges).toHaveLength(2);
+			expect(
+				result.billingPlan.charges.every(
+					(charge) => charge.debtor.type === "client",
+				),
+			).toBe(true);
+			expect(
+				result.billingPlan.charges.every(
+					(charge) => charge.noteRecipients[0]?.recipient.type === "client",
+				),
+			).toBe(true);
 		});
 	});
 });

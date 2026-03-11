@@ -1,6 +1,6 @@
 import { atacadoRepository } from "@/modules/atacado-repository/wholesale.repository";
-import { InvoiceCalculator } from "./invoice-calculator/invoice-calculator";
+import { InvoiceService } from "./invoice-persistence.service";
 
-const invoiceService = new InvoiceCalculator(atacadoRepository);
+const invoiceService = new InvoiceService(atacadoRepository);
 
 export { invoiceService };

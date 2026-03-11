@@ -46,6 +46,41 @@ const PartnerInvoiceSchema = z.object({
 	totalLines: z.number(),
 });
 
+const BillingParticipantSchema = z.object({
+	type: z.enum(["partner", "client"]),
+	id: z.union([z.string(), z.number()]),
+	name: z.string(),
+	document: z.string(),
+	email: z.string(),
+});
+
+const BillingItemSchema = z.object({
+	planId: z.union([z.string(), z.number()]),
+	description: z.string(),
+	unitPrice: z.number(),
+	quantity: z.number(),
+	total: z.number(),
+});
+
+const BillingNotePlanSchema = z.object({
+	recipient: BillingParticipantSchema,
+	total: z.number(),
+	totalLines: z.number(),
+	items: z.array(BillingItemSchema),
+});
+
+const BillingChargePlanSchema = z.object({
+	chargeKey: z.string(),
+	total: z.number(),
+	debtor: BillingParticipantSchema,
+	noteRecipients: z.array(BillingNotePlanSchema),
+});
+
+const BillingPlanSchema = z.object({
+	billingType: TipoFaturamentoEnum,
+	charges: z.array(BillingChargePlanSchema),
+});
+
 const InvoicePartnerSchema = z.object({
 	dueDate: z.string(),
 	invoiceTotal: z.number(),
@@ -53,11 +88,17 @@ const InvoicePartnerSchema = z.object({
 	partner: PartnerInvoiceSchema,
 	clients: z.array(ClientDetailSchema),
 	groupedServices: z.array(GroupedServiceSchema),
+	billingPlan: BillingPlanSchema,
 });
 
 export type ProcessedLine = z.infer<typeof ProcessedLineSchema>;
 export type GroupedLine = z.infer<typeof GroupedLineSchema>;
 export type GroupedService = z.infer<typeof GroupedServiceSchema>;
+export type BillingParticipant = z.infer<typeof BillingParticipantSchema>;
+export type BillingItem = z.infer<typeof BillingItemSchema>;
+export type BillingNotePlan = z.infer<typeof BillingNotePlanSchema>;
+export type BillingChargePlan = z.infer<typeof BillingChargePlanSchema>;
+export type BillingPlan = z.infer<typeof BillingPlanSchema>;
 
 export type ClientDetailBase = z.infer<typeof ClientDetailSchema>;
 export type PartnerInvoiceBase = z.infer<typeof PartnerInvoiceSchema>;
@@ -81,6 +122,49 @@ export interface CalculateInvoiceParams {
 	readonly partnerId: string | number;
 	readonly referenceDate: string;
 	readonly billingType?: TipoFaturamento;
+}
+
+export interface PersistInvoiceSummary {
+	readonly totalClientes: number;
+	readonly totalLinhas: number;
+	readonly valorTotal: number;
+}
+
+export interface PersistedFatura {
+	readonly id: number;
+	readonly f_status: "criada";
+	readonly f_data_referencia: string;
+	readonly f_data_vencimento: string;
+	readonly f_valor_total: string;
+	readonly f_tipo_de_faturamento: string;
+}
+
+export interface PersistedCobranca {
+	readonly id: number;
+	readonly f_valor_total: string;
+	readonly f_nome_devedor: string;
+	readonly f_status: "a-emitir";
+}
+
+export interface PersistedNotaFiscal {
+	readonly id: number;
+	readonly f_nome: string;
+	readonly f_cpfcnpj: string;
+	readonly f_status_interno: "a-emitir";
+	readonly f_fk_cobranca: number;
+}
+
+export interface PersistInvoiceData {
+	readonly fatura: PersistedFatura;
+	readonly cobrancas: PersistedCobranca[];
+	readonly notasFiscais: PersistedNotaFiscal[];
+}
+
+export interface PersistInvoiceResult {
+	readonly dateStr: string;
+	readonly billingType: TipoFaturamento;
+	readonly resumo: PersistInvoiceSummary;
+	readonly data: PersistInvoiceData;
 }
 
 export type BillingTypeConfig = {

@@ -1,5 +1,3 @@
-import type { Cliente } from "@/@types/atacado/Cliente";
-import type { Parceiro } from "@/@types/atacado/Parceiro";
 import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { AtacadoRepository } from "@/modules/atacado-repository/wholesale.repository.types";
 import { InvoiceCalculator } from "@/modules/invoice-service/invoice-calculator/invoice-calculator";
@@ -69,7 +67,7 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 		it("deve lançar EntityValidationError quando cliente tem campo undefined", async () => {
 			const cliente = createCliente({
 				f_cidade: undefined,
-			} as unknown as Cliente);
+			});
 
 			const repository = createMockRepository({ clients: [cliente] });
 			const calculator = new InvoiceCalculator(repository);
@@ -108,7 +106,7 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 		it("deve lançar DocumentValidationError quando parceiro tem CNPJ undefined", async () => {
 			const parceiro = createParceiro({
 				f_cnpj: undefined,
-			} as unknown as Parceiro);
+			});
 
 			const repository = createMockRepository({ partner: parceiro });
 			const calculator = new InvoiceCalculator(repository);
@@ -133,6 +131,10 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				createCobranca: jest.fn(),
 				createNFCom: jest.fn(),
 				createItemNFCom: jest.fn(),
+				deleteFatura: jest.fn(),
+				deleteCobranca: jest.fn(),
+				deleteNFCom: jest.fn(),
+				deleteItemNFCom: jest.fn(),
 			};
 			const calculator = new InvoiceCalculator(repository);
 
@@ -152,6 +154,10 @@ describe("InvoiceCalculator - edge cases e cenários negativos", () => {
 				createCobranca: jest.fn(),
 				createNFCom: jest.fn(),
 				createItemNFCom: jest.fn(),
+				deleteFatura: jest.fn(),
+				deleteCobranca: jest.fn(),
+				deleteNFCom: jest.fn(),
+				deleteItemNFCom: jest.fn(),
 			};
 			const calculator = new InvoiceCalculator(repository);
 

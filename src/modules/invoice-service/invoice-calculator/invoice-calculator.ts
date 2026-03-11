@@ -9,6 +9,7 @@ import type {
 	ClientDetail,
 	InvoicePartner,
 } from "../invoice.schemas";
+import { createBillingPlan } from "./domain/billing-plan-builder";
 import { createClientDetail } from "./domain/client-builder";
 import { calculateDueDate } from "./domain/date-calculator";
 import { LineProcessor } from "./domain/line-processor";
@@ -26,6 +27,7 @@ export class InvoiceCalculator {
 	async calculate({
 		partnerId,
 		referenceDate,
+		billingType = "parceiro",
 	}: CalculateInvoiceParams): Promise<InvoicePartner> {
 		const [partner, clients, plans] = await Promise.all([
 			this.repository.findParceiroById(partnerId),
@@ -61,6 +63,14 @@ export class InvoiceCalculator {
 			totalLines,
 		);
 
+		const billingPlan = createBillingPlan({
+			billingType,
+			partner,
+			clients: processedClients,
+			groupedServices,
+			invoiceTotal,
+		});
+
 		return {
 			dueDate,
 			invoiceTotal,
@@ -68,6 +78,7 @@ export class InvoiceCalculator {
 			partner: partnerInvoice,
 			clients: processedClients,
 			groupedServices,
+			billingPlan,
 		};
 	}
 

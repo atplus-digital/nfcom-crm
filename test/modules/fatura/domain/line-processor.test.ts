@@ -3,27 +3,33 @@ import type { PlanoDeServico } from "@/@types/atacado/PlanoDeServico";
 import type { Servico } from "@/@types/atacado/Servico";
 import { LineProcessor } from "@/modules/invoice-service/invoice-calculator/domain/line-processor";
 import { BusinessRuleError } from "@/shared/base.error";
+import type { TestOverrides } from "../../../fixtures/invoice-fixtures";
 
-const createPlano = (overrides?: Partial<PlanoDeServico>): PlanoDeServico => ({
-	id: 4,
-	f_nome: "1 Linha - 1 Canal",
-	f_assinatura_mensal: "3",
-	...overrides,
-});
+const createPlano = (
+	overrides?: TestOverrides<PlanoDeServico>,
+): PlanoDeServico =>
+	({
+		id: 4,
+		f_nome: "1 Linha - 1 Canal",
+		f_assinatura_mensal: "3",
+		...overrides,
+	}) as PlanoDeServico;
 
-const createServico = (overrides?: Partial<Servico>): Servico => ({
-	id: 100,
-	f_status: "1",
-	f_coghzwfvcnx: 4,
-	...overrides,
-});
+const createServico = (overrides?: TestOverrides<Servico>): Servico =>
+	({
+		id: 100,
+		f_status: "1",
+		f_coghzwfvcnx: 4,
+		...overrides,
+	}) as Servico;
 
-const createCliente = (overrides?: Partial<Cliente>): Cliente => ({
-	id: 1,
-	f_nome_razao: "Cliente Teste",
-	f_linhas_fixas: [createServico()],
-	...overrides,
-});
+const createCliente = (overrides?: TestOverrides<Cliente>): Cliente =>
+	({
+		id: 1,
+		f_nome_razao: "Cliente Teste",
+		f_linhas_fixas: [createServico()],
+		...overrides,
+	}) as Cliente;
 
 const defaultPlanos: PlanoDeServico[] = [
 	createPlano({ id: 4, f_nome: "1 Linha - 1 Canal", f_assinatura_mensal: "3" }),
@@ -47,10 +53,7 @@ describe("LineProcessor", () => {
 		});
 
 		it("deve filtrar planos sem id", () => {
-			const planos = [
-				createPlano({ id: undefined } as unknown as PlanoDeServico),
-				createPlano({ id: 4 }),
-			];
+			const planos = [createPlano({ id: undefined }), createPlano({ id: 4 })];
 			const processor = LineProcessor.create(planos);
 			const cliente = createCliente();
 
@@ -103,7 +106,7 @@ describe("LineProcessor", () => {
 			const processor = LineProcessor.create(defaultPlanos);
 			const cliente = createCliente({
 				f_linhas_fixas: undefined,
-			} as unknown as Cliente);
+			});
 
 			expect(() => processor.processClientLines(cliente)).toThrow(
 				BusinessRuleError,
@@ -146,9 +149,7 @@ describe("LineProcessor", () => {
 		it("deve lançar BusinessRuleError quando f_coghzwfvcnx é undefined", () => {
 			const processor = LineProcessor.create(defaultPlanos);
 			const cliente = createCliente({
-				f_linhas_fixas: [
-					createServico({ f_coghzwfvcnx: undefined } as unknown as Servico),
-				],
+				f_linhas_fixas: [createServico({ f_coghzwfvcnx: undefined })],
 			});
 
 			expect(() => processor.processClientLines(cliente)).toThrow(

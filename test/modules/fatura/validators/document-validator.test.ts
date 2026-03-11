@@ -1,5 +1,3 @@
-import type { Cliente } from "@/@types/atacado/Cliente";
-import type { Parceiro } from "@/@types/atacado/Parceiro";
 import { documentValidator } from "@/modules/invoice-service/invoice-calculator/validators/document.validator";
 import { DocumentValidationError } from "@/shared/base.error";
 import {
@@ -56,7 +54,7 @@ describe("documentValidator", () => {
 		it("deve retornar falha para CNPJ undefined", () => {
 			const parceiro = createParceiro({
 				f_cnpj: undefined,
-			} as unknown as Parceiro);
+			});
 			const result = documentValidator.validatePartner(parceiro);
 
 			expect(result.success).toBe(false);
@@ -66,7 +64,7 @@ describe("documentValidator", () => {
 			const parceiro = createParceiro({
 				f_razao_social: undefined,
 				f_cnpj: INVALID_CNPJ,
-			} as unknown as Parceiro);
+			});
 
 			const result = documentValidator.validatePartner(parceiro);
 
@@ -117,7 +115,7 @@ describe("documentValidator", () => {
 			const cliente = createCliente({
 				f_nome_razao: undefined,
 				f_cpf_cnpj: INVALID_CPF,
-			} as unknown as Cliente);
+			});
 			const result = documentValidator.validateClient(cliente);
 
 			expect(result.success).toBe(false);
