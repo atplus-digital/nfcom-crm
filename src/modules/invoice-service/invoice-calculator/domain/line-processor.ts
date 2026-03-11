@@ -90,8 +90,7 @@ class LineProcessor {
 				continue;
 			}
 
-			const planIdField = "f_coghzwfvcnx" as const;
-			const planId = line[planIdField] as number | undefined;
+			const planId = line[LINES.PLAN_ID_FIELD] as number | undefined;
 			const planInfo = getPlanInfo(planId, this.planLookup, client.id);
 
 			processedLines.push({

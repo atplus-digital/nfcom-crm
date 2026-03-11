@@ -92,7 +92,5 @@ export {
 	ProcessedLineSchema,
 	GroupedLineSchema,
 	GroupedServiceSchema,
-	ClientDetailSchema,
-	PartnerInvoiceSchema,
 	InvoicePartnerSchema,
 };

@@ -8,9 +8,9 @@ export interface Cobranca {
 	f_nome_devedor: string;
 	f_email_devedor: string;
 	f_documento_devedor: string;
-	f_id_externo: string;
 	f_descricao: string;
 
+	f_id_externo?: string;
 	f_link_fatura?: string;
 	f_fk_fatura?: number;
 	f_fatura?: Fatura;
