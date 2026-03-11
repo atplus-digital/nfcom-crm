@@ -43,6 +43,10 @@ Este documento apresenta uma análise completa do projeto **NFCom-CRM**, focando
 | `cofaturamento` | 1 cobrança parc. + n notas clientes | ❌ Não implementado  |
 | `cliente-final` | n cobranças + n notas clientes      | ❌ Não implementado  |
 
+> **Nota técnica:** O **cálculo dos valores** (soma de linhas por cliente, total geral) é **idêntico para todos os tipos** — o `billingType` não altera a matemática da fatura. O que muda é a **estrutura de persistência**: quem é o devedor das cobranças e destinatário das NFComs. O parâmetro é recebido pelo controller e repassado ao `calculate()`, mas atualmente o método ignora o campo na desestruturação (em `invoice-calculator.ts`, `calculate({ partnerId, referenceDate })`), o que é correto para o cálculo primário.
+>
+> **Base existente:** A constante `BILLING_TYPE_CONFIG` em `src/modules/invoice-service/invoice.constants.ts` já define `allowsDirectClientBilling` por tipo, podendo ser usada como ponto de partida para a lógica de persistência na US-001.
+
 ### 1.3 Estrutura de Dados no CRM
 
 | Entidade       | Tipo Definido                            | Repository Method                  | Status                     |
@@ -256,6 +260,29 @@ function createCliente(partial?: Partial<Cliente>): Cliente {
 
 ## 5.1 Especificações Técnicas Detalhadas
 
+### 5.1.0 Campos de Fatura (Input)
+
+```typescript
+interface FaturaInput {
+  f_data_referencia: string;        // Data de referência do request (formato YYYY-MM-DD)
+  f_valor_total: string;            // Soma total de todos os clientes (invoiceTotal.toFixed(2))
+  f_status: "criada";               // Fixo - aguarda validação manual no CRM
+  f_fk_parceiro: number;            // ID do parceiro (do request body)
+  f_tipo_de_faturamento: string;    // Tipo de faturamento selecionado (ex: "parceiro")
+  f_data_vencimento: string;        // Calculado conforme regra abaixo (formato YYYY-MM-DD)
+}
+```
+
+**Regra de cálculo de `f_data_vencimento`:**
+1. Pega `referenceDate` (data de referência do request, ex: `2026-03-01`)
+2. Soma 1 mês → `2026-04-01`
+3. Define o dia para `Parceiro.f_data_vencimento` (ou `10` se não definido) → `2026-04-10`
+4. Se o resultado for **< hoje + 6 dias**, substitui por `hoje + 6 dias`
+
+> Implementado em `src/modules/invoice-service/invoice-calculator/domain/date-calculator.ts`
+
+---
+
 ### 5.1.1 Regras de Negócio por Tipo de Faturamento
 
 #### Tipo: `parceiro`
@@ -303,7 +330,7 @@ function createCliente(partial?: Partial<Cliente>): Cliente {
 - **1 Cobrança** (devedor: Parceiro, valor: Total da fatura)
 - **N NFCom** (uma por cliente, destinatário: Cliente individual)
 
-> **Nota de negócio:** Diferença entre `via-parceiro` e `cofaturamento` será relevante na emissão (SEFAZ), não na preparação.
+> **Nota de negócio:** Para fins de **preparação da fatura**, `cofaturamento` é idêntico ao `via-parceiro` — mesma estrutura de 1 cobrança (parceiro) + N NFComs (clientes). A constante `BILLING_TYPE_CONFIG` registra `allowsDirectClientBilling: true` para `cofaturamento` (vs `false` para `via-parceiro`), mas essa flag **não tem efeito nesta etapa** e será relevante apenas na emissão (SEFAZ), onde o contexto fiscal do emitente difere.
 
 ---
 
@@ -332,14 +359,14 @@ function createCliente(partial?: Partial<Cliente>): Cliente {
 ```typescript
 interface CobrancaInput {
   // Obrigatórios
-  f_data_vencimento: string;      // Calculado: referenceDate + Parceiro.f_data_vencimento
+  f_data_vencimento: string;      // Calculado conforme regra em 5.1.0 (mesmo valor da Fatura)
   f_valor_total: string;          // Ver seção 5.1.1 por tipo
   f_status: "a-emitir";           // Fixo inicial
   f_nome_devedor: string;         // Ver seção 5.1.1 por tipo
   f_email_devedor: string;        // Ver seção 5.1.1 por tipo
   f_documento_devedor: string;    // Ver seção 5.1.1 por tipo
   f_id_externo: null;             // Vazio inicialmente
-  f_descricao: string;            // "**Descrição dos itens da cobrança** - [MES/ANO]"
+  f_descricao: string;            // "**Descrição dos itens da cobrança** - Mar/2026" (mês abreviado PT-BR 3 letras: Jan/Fev/Mar/Abr/Mai/Jun/Jul/Ago/Set/Out/Nov/Dez)
 
   // Opcionais
   f_link_fatura?: undefined;      // Gerado posteriormente pelo gateway
@@ -501,6 +528,36 @@ interface PersistInvoiceError {
 
 ---
 
+### 5.1.7 Estrutura das Chamadas de API (Criação Aninhada)
+
+A API do CRM usa **criação aninhada** — NFCom e ItemNFCom são criados via sub-rotas da entidade pai. A ordem obrigatória de criação é:
+
+| Ordem | Método do Repository             | Endpoint da API                                               |
+| ----- | -------------------------------- | ------------------------------------------------------------- |
+| 1     | `createFatura(data)`             | `POST /t_nfcom_faturas:create`                                |
+| 2     | `createCobranca(data)`           | `POST /t_nfcom_cobrancas:create`                              |
+| 3     | `createNFCom(cobrancaId, data)`  | `POST /t_nfcom_cobrancas/{cobrancaId}/f_notas_fiscais:create` |
+| 4     | `createItemNFCom(nfComId, data)` | `POST /t_nfcom_notas/{nfComId}/f_nota_itens:create`           |
+
+**Implicações para rollback (US-003):**
+
+A deleção deve ocorrer em **ordem inversa** (ItemNFCom → NFCom → Cobrança → Fatura). Os métodos de delete **não existem** na interface `AtacadoRepository` — precisam ser adicionados antes de implementar a US-003:
+
+```typescript
+// Adicionar em wholesale.repository.types.ts
+interface AtacadoRepository {
+  // ...métodos existentes...
+  deleteFatura(id: string | number): Promise<void>;
+  deleteCobranca(id: string | number): Promise<void>;
+  deleteNFCom(id: string | number): Promise<void>;
+  deleteItemNFCom(id: string | number): Promise<void>;
+}
+```
+
+> **Pendência:** Confirmar com a API do CRM o sufixo correto para deleção (`:destroy`, `:delete` ou outro) antes de implementar.
+
+---
+
 ## 5.2 User Stories
 
 ### US-001: Implementar Lógica de Tipo de Faturamento
@@ -540,10 +597,11 @@ interface PersistInvoiceError {
 **Description:** Como sistema, preciso garantir consistência de dados com rollback manual se a API do CRM não suportar transações.
 
 **Acceptance Criteria:**
-- [ ] Detectar se API suporta transações
-- [ ] Implementar rollback manual (delete em cascata)
-- [ ] Log de erro incluir step onde falhou
-- [ ] Testes de cenários de falha
+- [ ] Adicionar métodos `deleteFatura`, `deleteCobranca`, `deleteNFCom`, `deleteItemNFCom` à interface `AtacadoRepository` e sua implementação (`wholesale.repository.ts`)
+- [ ] Confirmar sufixo correto de delete na API do CRM e definir rotas em `atacado.routes.ts`
+- [ ] Implementar rollback em ordem inversa: ItemNFCom → NFCom → Cobrança → Fatura
+- [ ] Log de erro incluir step onde falhou e quantos registros foram revertidos
+- [ ] Testes de cenários de falha em cada etapa da criação
 - [ ] Typecheck/lint passes
 
 ---
@@ -553,7 +611,7 @@ interface PersistInvoiceError {
 **Description:** Como desenvolvedor, preciso de valores DEFAULT para CFOP e classificação fiscal enquanto origem final não é definida.
 
 **Acceptance Criteria:**
-- [ ] Criar arquivo `src/modules/invoice-service/invoice.constants.ts` com DEFAULT_CFOP e DEFAULT_CCLASS
+- [ ] Adicionar `DEFAULT_CFOP` e `DEFAULT_CCLASS` ao arquivo existente `src/modules/invoice-service/invoice.constants.ts` (arquivo já contém `DATES` e `BILLING_TYPE_CONFIG`)
 - [ ] Aplicar valores DEFAULT em todos os ItemNFCom criados
 - [ ] Adicionar comentário TODO técnico explicando que origem será definida posteriormente
 - [ ] Typecheck/lint passes
