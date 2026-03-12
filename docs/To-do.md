@@ -7,7 +7,7 @@
 
 ## Média Prioridade
 - [ ] **Swagger** - Documentação OpenAPI/Swagger
-- [ ] **Tests** - ✅ Cobertura atual: 97%+ (287 testes)
+- [ ] **Tests**
 
 ## Baixa Prioridade
 - [ ] **Cors** - Configuração de CORS para produção

@@ -1,0 +1,159 @@
+{
+    "project": "nfcom-crm",
+    "branchName": "ralph/invoice-service-refatoring",
+    "description": "Refatoração arquitetural do InvoiceService - separar responsabilidades em formatters, validators, domain handlers e orquestrador",
+    "userStories": [
+        {
+            "id": "US-001",
+            "title": "Extrair CurrencyFormatter",
+            "description": "Como desenvolvedor, quero extrair a formatação de moeda para um módulo dedicado para reutilização e testes isolados.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/formatters/currency.formatter.ts",
+                "Mover formatCurrency para classe CurrencyFormatter",
+                "Exportar método estático format(value: number): string",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 1,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-002",
+            "title": "Extrair DateFormatter",
+            "description": "Como desenvolvedor, quero isolar a lógica de formatação de datas para consistência no código.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/formatters/date.formatter.ts",
+                "Mover constante MONTHS_PT_BR para o novo arquivo",
+                "Mover resolveMonthReference para classe DateFormatter",
+                "Exportar método estático resolveMonthReference(date: string): string",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 2,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-003",
+            "title": "Atualizar imports para formatters",
+            "description": "Como desenvolvedor, quero atualizar o serviço principal para usar os novos formatters extraídos.",
+            "acceptanceCriteria": [
+                "invoice-persistence.service.ts importa CurrencyFormatter de formatters/currency.formatter.ts",
+                "invoice-persistence.service.ts importa DateFormatter de formatters/date.formatter.ts",
+                "Comportamento inalterado após refatoração",
+                "Typecheck passes"
+            ],
+            "priority": 3,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-004",
+            "title": "Extrair EntityIdValidator",
+            "description": "Como desenvolvedor, quero isolar a validação de entity IDs para clareza e reutilização.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/validators/entity-id.validator.ts",
+                "Mover ensureEntityId para classe EntityIdValidator",
+                "Adicionar tipo de retorno assertivo ao método",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 4,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-005",
+            "title": "Criar tipo ResolvedRecipientData e centralizar tipos de persistência",
+            "description": "Como desenvolvedor, quero centralizar tipos relacionados à persistência para organização e clareza.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/domain/persistence-entities.ts",
+                "Mover tipos PersistenceStep, PersistedEntities e RollbackResult para o arquivo",
+                "Criar e exportar tipo ResolvedRecipientData nesse arquivo",
+                "Typecheck passes"
+            ],
+            "priority": 5,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-006",
+            "title": "Extrair RecipientResolver",
+            "description": "Como desenvolvedor, quero separar a lógica de resolução de destinatário para reduzir complexidade do serviço principal.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/domain/recipient-resolver.ts",
+                "Mover resolveRecipientData para classe RecipientResolver",
+                "Usar tipo ResolvedRecipientData (de persistence-entities.ts) como tipo de retorno",
+                "Mover helper resolveName para o mesmo arquivo",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 6,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-007",
+            "title": "Extrair RollbackHandler",
+            "description": "Como desenvolvedor, quero isolar a lógica de rollback para clareza e manutenção.",
+            "acceptanceCriteria": [
+                "Criar src/modules/invoice-service/invoice-persistence/domain/rollback-handler.ts",
+                "Mover rollbackPersistedData para classe RollbackHandler",
+                "Injetar AtacadoRepository no construtor do RollbackHandler",
+                "Criar método execute(entities: PersistedEntities): Promise<RollbackResult>",
+                "Comportamento de rollback inalterado (1:1 com implementação atual)",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 7,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-008",
+            "title": "Criar InvoiceOrchestrator",
+            "description": "Como desenvolvedor, quero renomear e simplificar o serviço principal para ser apenas um orquestrador com dependências injetadas.",
+            "acceptanceCriteria": [
+                "Renomear classe InvoicePersistenceService para InvoiceOrchestrator em invoice-persistence.service.ts",
+                "Injetar no construtor: repository, calculator e rollbackHandler",
+                "Simplificar calculateAndPersist usando RecipientResolver, EntityIdValidator e RollbackHandler",
+                "Arquivo reduzido para ~100 linhas",
+                "Typecheck passes"
+            ],
+            "priority": 8,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-009",
+            "title": "Atualizar entry point do invoice service",
+            "description": "Como desenvolvedor, quero atualizar o entry point para instanciar o InvoiceOrchestrator corretamente com todas as dependências.",
+            "acceptanceCriteria": [
+                "Atualizar invoice.service.ts para instanciar InvoiceOrchestrator com todas dependências injetadas",
+                "Exportar instância corretamente para uso externo",
+                "Interface pública do serviço inalterada",
+                "Typecheck passes"
+            ],
+            "priority": 9,
+            "passes": false,
+            "notes": ""
+        },
+        {
+            "id": "US-010",
+            "title": "Criar testes de integração do fluxo completo",
+            "description": "Como desenvolvedor, quero garantir que o fluxo completo de persistência com rollback funciona após a refatoração.",
+            "acceptanceCriteria": [
+                "Teste de integração para fluxo completo de calculateAndPersist passando",
+                "Teste de rollback em caso de falha parcial passando",
+                "Todos os testes existentes continuam passando",
+                "Cobertura de testes mantida ou aumentada",
+                "Typecheck passes",
+                "Tests pass"
+            ],
+            "priority": 10,
+            "passes": false,
+            "notes": ""
+        }
+    ]
+}

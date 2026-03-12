@@ -15,5 +15,6 @@ type RouteSuffix = ":get" | ":list" | ":create" | ":destroy";
 export type AtacadoRouteWithSuffix =
 	| AtacadoRoute
 	| `${AtacadoRoute}${RouteSuffix}`
-	| `${AtacadoRoute}/${string}`
-	| `${AtacadoRoute}/${string}${RouteSuffix}`;
+	| `${AtacadoRoute}/${string | number}`
+	| `${AtacadoRoute}/${string | number}${RouteSuffix}`
+	| `${AtacadoRoute}/${string | number}${string | number}${RouteSuffix}`;
