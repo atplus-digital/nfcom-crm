@@ -114,23 +114,27 @@ class AtacadoApiRepository implements AtacadoRepository {
 	}
 
 	async deleteFatura(id: string | number): Promise<void> {
-		await atacadoHttpClient.delete(`${ATACADO_ROUTES.faturas}/${id}:destroy`);
+		await atacadoHttpClient.post(`${ATACADO_ROUTES.faturas}:destroy`, {
+			params: { filterByTk: id },
+		});
 	}
 
 	async deleteCobranca(id: string | number): Promise<void> {
-		await atacadoHttpClient.delete(`${ATACADO_ROUTES.cobrancas}/${id}:destroy`);
+		await atacadoHttpClient.post(`${ATACADO_ROUTES.cobrancas}:destroy`, {
+			params: { filterByTk: id },
+		});
 	}
 
 	async deleteNFCom(id: string | number): Promise<void> {
-		await atacadoHttpClient.delete(
-			`${ATACADO_ROUTES.notasFiscais}/${id}:destroy`,
-		);
+		await atacadoHttpClient.post(`${ATACADO_ROUTES.notasFiscais}:destroy`, {
+			params: { filterByTk: id },
+		});
 	}
 
 	async deleteItemNFCom(id: string | number): Promise<void> {
-		await atacadoHttpClient.delete(
-			`${ATACADO_ROUTES.itensNFCom}/${id}:destroy`,
-		);
+		await atacadoHttpClient.post(`${ATACADO_ROUTES.itensNFCom}:destroy`, {
+			params: { filterByTk: id },
+		});
 	}
 }
 

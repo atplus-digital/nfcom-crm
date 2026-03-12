@@ -7,12 +7,11 @@ jest.mock("@/env", () => ({
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
-const mockDelete = jest.fn();
 
 jest.mock(
 	"@/modules/atacado-repository/http-client/atacado-http-client",
 	() => ({
-		atacadoHttpClient: { get: mockGet, post: mockPost, delete: mockDelete },
+		atacadoHttpClient: { get: mockGet, post: mockPost },
 		ATACADO_ROUTES: {
 			parceiros: "/t_parceiros",
 			clientes: "/t_clientes",
@@ -280,22 +279,30 @@ describe("AtacadoApiRepository", () => {
 	describe("delete methods", () => {
 		it("deve deletar fatura", async () => {
 			await atacadoRepository.deleteFatura(10);
-			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_faturas/10:destroy");
+			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_faturas:destroy", {
+				params: { filterByTk: 10 },
+			});
 		});
 
 		it("deve deletar cobrança", async () => {
 			await atacadoRepository.deleteCobranca(20);
-			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_cobrancas/20:destroy");
+			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_cobrancas:destroy", {
+				params: { filterByTk: 20 },
+			});
 		});
 
 		it("deve deletar NFCom", async () => {
 			await atacadoRepository.deleteNFCom(30);
-			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_notas/30:destroy");
+			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_notas:destroy", {
+				params: { filterByTk: 30 },
+			});
 		});
 
 		it("deve deletar item de NFCom", async () => {
 			await atacadoRepository.deleteItemNFCom(40);
-			expect(mockDelete).toHaveBeenCalledWith("/t_nfcom_itens/40:destroy");
+			expect(mockPost).toHaveBeenCalledWith("/t_nfcom_itens:destroy", {
+				params: { filterByTk: 40 },
+			});
 		});
 	});
 });

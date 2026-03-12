@@ -2,27 +2,26 @@
   "name": "nfcom-crm",
   "description": "",
   "author": "ATPlus",
-  "contributors": [
-    "github.com/gugacarbo"
-  ],
-  "packageManager": "pnpm@10.28.2",
   "main": "dist/index.js",
   "keywords": [],
   "license": "ISC",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.28.2",
+  "contributors": [
+    "github.com/gugacarbo"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "dev": "tsx watch --watch src src/index.ts",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/index.js",
-    "biome:write": "biome format --write && biome lint --write && biome check --write",
+    "biome:fix": "biome check --write",
     "format": "biome format --write",
     "lint": "biome lint",
     "check": "biome check",
     "test": "jest --maxWorkers=8",
     "coverage": "pnpm test --coverage && coverage-badges --output docs/coverage-badges.svg",
-    "make-badges": "coverage-badges",
     "types:gen": "tsx scripts/types-gen/index.mts",
-    "commit.": "pnpm format && pnpm lint --write && pnpm check --write && pnpm coverage && pnpm build && git add . && git commit -m"
+    "commit.": "pnpm biome:fix && pnpm coverage && pnpm build && git add . && git commit -m"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",

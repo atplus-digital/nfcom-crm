@@ -26,10 +26,10 @@ cp .env.example .env
 
 | Variável          | Descrição                        | Padrão        |
 | ----------------- | -------------------------------- | ------------- |
-| `ATACADO_API_KEY` | Chave de autenticação da API AT+ | (obrigatório) |
-| `ATACADO_API_URL` | URL base da API AT+              | (obrigatório) |
 | `SERVER_URL`      | Host do servidor                 | `0.0.0.0`     |
 | `SERVER_PORT`     | Porta do servidor                | `3333`        |
+| `ATACADO_API_KEY` | Chave de autenticação da API AT+ | (obrigatório) |
+| `ATACADO_API_URL` | URL base da API AT+              | (obrigatório) |
 
 ## Scripts
 
